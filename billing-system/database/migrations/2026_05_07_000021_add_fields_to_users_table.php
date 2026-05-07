@@ -40,7 +40,7 @@ return new class extends Migration
             $table->string('currency', 3)->nullable();
             
             // Security
-            $table->string('api_token', 80)->unique()->nullable()->after('rememberToken');
+            $table->string('api_token', 80)->unique()->nullable()->after('remember_token');
             $table->timestamp('last_login_at')->nullable();
             $table->string('last_login_ip')->nullable();
             
