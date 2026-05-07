@@ -152,6 +152,8 @@
                 </table>
             </div>
 
+            <div class="callout callout-tip"><span class="callout-icon">💡</span><div class="callout-body"><div class="callout-label">NODE.JS VERSION</div><p>BillingHub requires <strong>Node.js 20.19+</strong> or <strong>22.12+</strong> for the build process. The standard Ubuntu packages may provide an older version. See the dependency installation instructions for Node.js setup.</p></div></div>
+
             <div class="callout callout-tip"><span class="callout-icon">💡</span><div class="callout-body"><div class="callout-label">TIP</div><p>Don't want to self-host? BillingHub works great on any VPS with 1 GB RAM. DigitalOcean and Hetzner both offer affordable entry-level instances.</p></div></div>
 
             <h2 id="dependencies">Required Dependencies <a class="anchor-link" href="#dependencies">#</a></h2>
@@ -166,39 +168,43 @@
                 <div class="code-tab-panel active" id="tab-ubuntu24">
 <pre><code>apt -y install software-properties-common curl apt-transport-https ca-certificates gnupg
 LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php
+LC_ALL=C.UTF-8 add-apt-repository -y ppa:chris-lea/node.js
 curl -sSL https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | sudo bash -s -- --mariadb-server-version="mariadb-10.11"
 apt update
-apt -y install php8.3 php8.3-{common,cli,gd,mysql,mbstring,bcmath,xml,fpm,curl,zip,intl,redis} mariadb-server nginx tar unzip git redis-server nodejs npm composer</code></pre>
+apt -y install php8.2 php8.2-{common,cli,gd,mysql,mbstring,bcmath,xml,fpm,curl,zip,intl,redis} mariadb-server nginx tar unzip git redis-server nodejs composer</code></pre>
                 </div>
                 <div class="code-tab-panel" id="tab-ubuntu22">
 <pre><code>apt -y install software-properties-common curl apt-transport-https ca-certificates gnupg
-LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php
+LC_ALL=C.UTF-8 add-apt-repository -y ppa:chris-lea/node.js
 apt update
-apt -y install php8.3 php8.3-{common,cli,gd,mysql,mbstring,bcmath,xml,fpm,curl,zip,intl,redis} mariadb-server nginx tar unzip git redis-server nodejs npm composer</code></pre>
+apt -y install php8.2 php8.2-{common,cli,gd,mysql,mbstring,bcmath,xml,fpm,curl,zip,intl,redis} mariadb-server nginx tar unzip git redis-server nodejs
+apt -y install php8.2 php8.2-{common,cli,gd,mysql,mbstring,bcmath,xml,fpm,curl,zip,intl,redis} mariadb-server nginx tar unzip git redis-server nodejs npm composer</code></pre>
                 </div>
                 <div class="code-tab-panel" id="tab-debian">
 <pre><code>apt -y install software-properties-common curl ca-certificates gnupg2 sudo lsb-release
 echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/sury-php.list
-curl -fsSL https://packages.sury.org/php/apt.gpg | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/sury-keyring.gpg
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo bash -
 apt update
 curl -sSL https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | sudo bash -s -- --mariadb-server-version="mariadb-10.11"
-apt install -y php8.3 php8.3-{common,cli,gd,mysql,mbstring,bcmath,xml,fpm,curl,zip,intl,redis} mariadb-server nginx tar unzip git redis-server nodejs npm</code></pre>
+apt install -y php8.2 php8.2-{common,cli,gd,mysql,mbstring,bcmath,xml,fpm,curl,zip,intl,redis} mariadb-server nginx tar unzip git redis-server nodejs
+apt install -y php8.2 php8.2-{common,cli,gd,mysql,mbstring,bcmath,xml,fpm,curl,zip,intl,redis} mariadb-server nginx tar unzip git redis-server nodejs npm composer</code></pre>
                 </div>
             </div>
 
             <h2 id="installing">Installing <a class="anchor-link" href="#installing">#</a></h2>
-            <h3>Create the directory</h3>
-            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>mkdir /var/www/billinghub</code></pre></div>
+            <h3>Clone the repository</h3>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>mkdir -p /var/www
+cd /var/www
+git clone https://github.com/Bebonaiem/billing-page.git billinghub
+cd billinghub/billing-system</code></pre></div>
             
-            <h3>Download the latest release</h3>
-            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>cd /var/www/billing-page
-curl -Lo billing-page.tar.gz https://github.com/Bebonaiem/billing-page/releases/latest/download/billing-page.tar.gz</code></pre></div>
-            
-            <h3>Extract the archive</h3>
-            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>tar -xzvf billinghub.tar.gz</code></pre></div>
+            <h3>Install dependencies</h3>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>composer install --no-dev --optimize-autoloader
+npm install && npm run build</code></pre></div>
             
             <h3>Set file permissions</h3>
-            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>chmod -R 755 storage/* bootstrap/cache/</code></pre></div>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>chmod -R 775 /var/www/billinghub/billing-system/storage /var/www/billinghub/billing-system/bootstrap/cache
+chown -R www-data:www-data /var/www/billinghub</code></pre></div>
 
             <h2 id="database">Creating the Database <a class="anchor-link" href="#database">#</a></h2>
             <div class="callout callout-important"><span class="callout-icon">📌</span><div class="callout-body"><div class="callout-label">IMPORTANT</div><p>Replace <code>yourPassword</code> with a strong, unique password before running these commands.</p></div></div>
@@ -206,11 +212,13 @@ curl -Lo billing-page.tar.gz https://github.com/Bebonaiem/billing-page/releases/
 CREATE USER 'billinghub'@'127.0.0.1' IDENTIFIED BY 'yourPassword';
 CREATE DATABASE billinghub;
 GRANT ALL PRIVILEGES ON billinghub.* TO 'billinghub'@'127.0.0.1' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
 quit</code></pre></div>
 
             <h2 id="env-setup-1">Setting Up .env <a class="anchor-link" href="#env-setup-1">#</a></h2>
             <h3>Create the environment file</h3>
-            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>cp .env.example .env</code></pre></div>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>cd /var/www/billinghub/billing-system
+cp .env.example .env</code></pre></div>
             
             <h3>Generate encryption key</h3>
             <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>php artisan key:generate --force
@@ -228,20 +236,26 @@ DB_PASSWORD=yourPassword</code></pre></div>
 
             <h2 id="migrations">Setting Up the Database <a class="anchor-link" href="#migrations">#</a></h2>
             <div class="callout callout-warning"><span class="callout-icon">⚠️</span><div class="callout-body"><div class="callout-label">WARNING</div><p>The migration command below may take a few minutes on first run. Do <strong>not</strong> interrupt the process.</p></div></div>
-            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>php artisan migrate --force --seed</code></pre></div>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>cd /var/www/billinghub/billing-system
+php artisan migrate --force --seed</code></pre></div>
 
             <h3>Initialize app settings</h3>
             <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>php artisan app:init</code></pre></div>
             
-            <h3>Create your admin account</h3>
+            <h3>Create admin account (optional)</h3>
+            <p>A default admin account is automatically created during migration with the following credentials:</p>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">credentials</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>Email: admin@example.com
+Password: (check database seeders for initial password setup)</code></pre></div>
+            <p>To create an additional admin account or replace the default one, run:</p>
             <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>php artisan app:user:create</code></pre></div>
+            <p>This command will prompt you for the user's email, name, and password.</p>
 
             <h2 id="cron-service">Cronjob &amp; Queue Service <a class="anchor-link" href="#cron-service">#</a></h2>
             <h3>Create the cronjob</h3>
             <p>Edit the crontab for the webserver user to run the scheduler every minute:</p>
             <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>sudo crontab -u www-data -e</code></pre></div>
-            <p>Add this line to the crontab:</p>
-            <div class="code-block"><div class="code-block-header"><span class="code-lang">cron</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>* * * * * php /var/www/billinghub/artisan schedule:run >> /dev/null 2>&amp;1</code></pre></div>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">cron</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>* * * * * /usr/bin/php /var/www/billinghub/billing-system/artisan schedule:run >> /dev/null 2&amp;1</code></pre></div>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">cron</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>* * * * * /usr/bin/php /var/www/billinghub/artisan schedule:run >> /dev/null 2>&amp;1</code></pre></div>
 
             <h3>Create the queue worker service</h3>
             <p>Create <code>/etc/systemd/system/billinghub.service</code> with the following content:</p>
@@ -251,7 +265,7 @@ Description=BillingHub Queue Worker
 [Service]
 User=www-data
 Group=www-data
-Restart=always
+Restart=alwaysbilling-system/
 ExecStart=/usr/bin/php /var/www/billinghub/artisan queue:work
 StartLimitInterval=180
 StartLimitBurst=30
@@ -286,7 +300,7 @@ sudo systemctl enable --now redis-server</code></pre></div>
             <p>Create a new site config at <code>/etc/nginx/sites-available/billinghub</code>:</p>
             <div class="code-block"><div class="code-block-header"><span class="code-lang">nginx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>server {
     listen 80;
-    server_name your-domain.com;
+    server_name your-domain.cbilling-system/om;
     root /var/www/billinghub/public;
     index index.php;
 
@@ -295,7 +309,7 @@ sudo systemctl enable --now redis-server</code></pre></div>
     }
 
     location ~ \.php$ {
-        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+        fastcgi_pass unix:/run/php/php8.2-fpm.sock;
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         include fastcgi_params;
     }
@@ -325,11 +339,12 @@ certbot --nginx -d your-domain.com</code></pre></div>
         <div class="doc-content" id="page-updating">
             <h1>Updating BillingHub</h1>
             <p>Pull the latest release and run migrations to stay up to date.</p>
-            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>cd /var/www/billinghub
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>cd /var/www/billinghub/billing-system
 git pull origin main
 composer install --no-dev --optimize-autoloader
 npm install && npm run build
 php artisan migrate --force
+php artisan queue:restart
 systemctl restart billinghub.service</code></pre></div>
             <div class="doc-pager">
                 <div class="pager-card prev" onclick="showPage('ssl')"><span class="pager-arrow">←</span><div><div class="pager-label">Previous page</div><div class="pager-title">SSL Certificates</div></div></div>
