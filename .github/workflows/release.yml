@@ -1,0 +1,47 @@
+name: Release Package
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Get version from tag
+        id: tag_name
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+      
+      - name: Setup build environment
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y zip
+      
+      - name: Create release package
+        run: |
+          bash scripts/package-release.sh ${{ steps.tag_name.outputs.VERSION }}
+      
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            releases/billinghub-${{ steps.tag_name.outputs.VERSION }}.zip
+            releases/billinghub-${{ steps.tag_name.outputs.VERSION }}.sha256
+            releases/billinghub-${{ steps.tag_name.outputs.VERSION }}.md5
+          body_path: releases/RELEASE_NOTES_v${{ steps.tag_name.outputs.VERSION }}.md
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Upload to Release
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-package
+          path: releases/
+          retention-days: 30

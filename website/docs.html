@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="BillingHub Documentation - Complete installation guide and configuration for the open-source billing system.">
+    <title>Documentation | BillingHub Docs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="docs-page">
+
+    <!-- Custom Cursor Trail -->
+    <div class="cursor-trail" id="cursor-trail"></div>
+
+    <!-- Navigation -->
+    <header class="docs-topnav" id="main-nav">
+        <div class="inner">
+            <a href="index.html" class="nav-logo">
+                <div class="nav-logo-icon">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                </div>
+                BillingHub
+            </a>
+            <nav class="topnav-links">
+                <a href="index.html">Home</a>
+                <a href="docs.html" class="active">Docs</a>
+                <a href="https://github.com" target="_blank">GitHub</a>
+            </nav>
+            <div class="topnav-search">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity:.45;flex-shrink:0"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                <input type="text" placeholder="Search docs…" aria-label="Search">
+                <span class="search-kbd">K</span>
+            </div>
+            <div class="topnav-right">
+                <a href="https://github.com" target="_blank" class="topnav-hide-mobile">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.167 6.839 9.49.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+                </a>
+                <a href="download.html" class="btn-dl">Download</a>
+            </div>
+            <button class="nav-toggle" aria-label="Toggle menu" id="nav-toggle-btn">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="nav-mobile" id="nav-mobile">
+        <a href="index.html">Home</a>
+        <a href="docs.html">Documentation</a>
+        <a href="https://github.com" target="_blank">GitHub</a>
+        <a href="download.html" class="btn-dl">Download Now</a>
+    </div>
+
+<div class="docs-page-wrap">
+
+    <!-- ──── LEFT SIDEBAR ──── -->
+    <aside class="docs-sidebar" id="docs-sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Getting Started</div>
+            <a class="sidebar-link active" data-page="introduction">Introduction</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Setting Up</div>
+            <a class="sidebar-link" data-page="installation">Installation</a>
+            <a class="sidebar-link" data-page="webserver">Webserver Setup</a>
+            <a class="sidebar-link" data-page="ssl">Creating SSL Certificates</a>
+            <a class="sidebar-link" data-page="updating">Updating</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Configuration</div>
+            <a class="sidebar-link" data-page="environment">.env Setup</a>
+            <a class="sidebar-link" data-page="database">Database</a>
+            <a class="sidebar-link" data-page="email">Email</a>
+            <a class="sidebar-link" data-page="payments">Payments</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Guides</div>
+            <a class="sidebar-link" data-page="products">Products</a>
+            <a class="sidebar-link" data-page="invoices">Invoices</a>
+            <a class="sidebar-link" data-page="tickets">Support Tickets</a>
+            <a class="sidebar-link" data-page="sso">Single Sign On</a>
+            <a class="sidebar-link" data-page="cli">CLI Reference</a>
+            <a class="sidebar-link" data-page="faq">FAQ</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Extensions</div>
+            <a class="sidebar-link" data-page="pterodactyl">Pterodactyl</a>
+            <a class="sidebar-link" data-page="stripe">Stripe</a>
+            <a class="sidebar-link" data-page="paypal">PayPal</a>
+            <a class="sidebar-link" data-page="extensions">Custom Extensions</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Advanced</div>
+            <a class="sidebar-link" data-page="queues">Queue Workers</a>
+            <a class="sidebar-link" data-page="troubleshooting">Troubleshooting</a>
+            <a class="sidebar-link" data-page="changelog">Changelog</a>
+        </div>
+    </aside>
+
+    <!-- ──── MAIN CONTENT ──── -->
+    <main class="docs-main" id="docs-main">
+
+        <!-- breadcrumb -->
+        <nav class="docs-breadcrumb" id="breadcrumb">
+            <a href="docs.html">Docs</a>
+            <span class="sep">›</span>
+            <span>Getting Started</span>
+            <span class="sep">›</span>
+            <span>Introduction</span>
+        </nav>
+
+        <!-- ═══════════ PAGE: INTRODUCTION ═══════════ -->
+        <div class="doc-content active" id="page-introduction">
+            <h1>Introduction</h1>
+            <p>BillingHub is a free, open-source billing and invoicing system built for hosting providers and service businesses. It is self-hosted, fully extensible, and ships with everything you need to accept payments, manage clients, and automate recurring billing.</p>
+            <h2 id="why">Why BillingHub?</h2>
+            <ul>
+                <li><strong>Self-hosted</strong> — your data stays on your server</li>
+                <li><strong>No per-seat pricing</strong> — one deployment, unlimited staff</li>
+                <li><strong>Extensible</strong> — build custom modules for any integration</li>
+                <li><strong>Modern stack</strong> — PHP 8.3, Laravel, Vite, Tailwind</li>
+            </ul>
+            <div class="callout callout-tip"><span class="callout-icon">💡</span><div class="callout-body"><div class="callout-label">TIP</div><p>Ready to install? Head straight to the <span style="color:var(--primary);cursor:pointer" onclick="showPage('installation')">Installation guide</span> to get started.</p></div></div>
+            <div class="doc-pager">
+                <div class="pager-card next" onclick="showPage('installation')">
+                    <div><div class="pager-label">Next page</div><div class="pager-title">Installation</div></div>
+                    <span class="pager-arrow">→</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════ PAGE: INSTALLATION ═══════════ -->
+        <div class="doc-content" id="page-installation">
+            <h1>Installation</h1>
+            <h2 id="supported-os">Supported Operating Systems <a class="anchor-link" href="#supported-os">#</a></h2>
+            <div class="doc-table-wrap">
+                <table class="doc-table">
+                    <thead><tr><th>Operating System</th><th>Version</th><th>Supported</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Ubuntu</strong></td><td>24.04</td><td><span class="badge-yes">✅</span></td></tr>
+                        <tr><td></td><td>22.04</td><td><span class="badge-yes">✅</span></td></tr>
+                        <tr><td></td><td>20.04</td><td><span class="badge-yes">✅</span></td></tr>
+                        <tr><td><strong>Debian</strong></td><td>12</td><td><span class="badge-yes">✅</span></td></tr>
+                        <tr><td></td><td>11</td><td><span class="badge-yes">✅</span></td></tr>
+                        <tr><td><strong>CentOS</strong></td><td>8</td><td><span class="badge-yes">✅</span></td></tr>
+                        <tr><td></td><td>7</td><td><span class="badge-yes">✅</span></td></tr>
+                        <tr><td><strong>Windows</strong></td><td>Any</td><td><span class="badge-no">❌</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="callout callout-tip"><span class="callout-icon">💡</span><div class="callout-body"><div class="callout-label">TIP</div><p>Don't want to self-host? BillingHub works great on any VPS with 1 GB RAM. DigitalOcean and Hetzner both offer affordable entry-level instances.</p></div></div>
+
+            <h2 id="dependencies">Required Dependencies <a class="anchor-link" href="#dependencies">#</a></h2>
+            <p>Check that all required packages are present before downloading BillingHub.</p>
+
+            <div class="code-tabs" id="dep-tabs">
+                <div class="code-tab-bar">
+                    <button class="code-tab-btn active" data-tab="ubuntu24">Ubuntu 24.04</button>
+                    <button class="code-tab-btn" data-tab="ubuntu22">Ubuntu 22.04</button>
+                    <button class="code-tab-btn" data-tab="debian">Debian</button>
+                </div>
+                <div class="code-tab-panel active" id="tab-ubuntu24">
+<pre><code>apt -y install software-properties-common curl apt-transport-https ca-certificates gnupg
+LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php
+curl -sSL https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | sudo bash -s -- --mariadb-server-version="mariadb-10.11"
+apt update
+apt -y install php8.3 php8.3-{common,cli,gd,mysql,mbstring,bcmath,xml,fpm,curl,zip,intl,redis} mariadb-server nginx tar unzip git redis-server nodejs npm composer</code></pre>
+                </div>
+                <div class="code-tab-panel" id="tab-ubuntu22">
+<pre><code>apt -y install software-properties-common curl apt-transport-https ca-certificates gnupg
+LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php
+apt update
+apt -y install php8.3 php8.3-{common,cli,gd,mysql,mbstring,bcmath,xml,fpm,curl,zip,intl,redis} mariadb-server nginx tar unzip git redis-server nodejs npm composer</code></pre>
+                </div>
+                <div class="code-tab-panel" id="tab-debian">
+<pre><code>apt -y install software-properties-common curl ca-certificates gnupg2 sudo lsb-release
+echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/sury-php.list
+curl -fsSL https://packages.sury.org/php/apt.gpg | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/sury-keyring.gpg
+apt update
+curl -sSL https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | sudo bash -s -- --mariadb-server-version="mariadb-10.11"
+apt install -y php8.3 php8.3-{common,cli,gd,mysql,mbstring,bcmath,xml,fpm,curl,zip,intl,redis} mariadb-server nginx tar unzip git redis-server nodejs npm</code></pre>
+                </div>
+            </div>
+
+            <h2 id="installing">Installing <a class="anchor-link" href="#installing">#</a></h2>
+            <h3>Create the directory</h3>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>mkdir /var/www/billinghub</code></pre></div>
+            
+            <h3>Download the latest release</h3>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>cd /var/www/billinghub
+curl -Lo billinghub.tar.gz https://github.com/yourusername/billinghub/releases/latest/download/billinghub.tar.gz</code></pre></div>
+            
+            <h3>Extract the archive</h3>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>tar -xzvf billinghub.tar.gz</code></pre></div>
+            
+            <h3>Set file permissions</h3>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>chmod -R 755 storage/* bootstrap/cache/</code></pre></div>
+
+            <h2 id="database">Creating the Database <a class="anchor-link" href="#database">#</a></h2>
+            <div class="callout callout-important"><span class="callout-icon">📌</span><div class="callout-body"><div class="callout-label">IMPORTANT</div><p>Replace <code>yourPassword</code> with a strong, unique password before running these commands.</p></div></div>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">mysql</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>mysql -u root -p
+CREATE USER 'billinghub'@'127.0.0.1' IDENTIFIED BY 'yourPassword';
+CREATE DATABASE billinghub;
+GRANT ALL PRIVILEGES ON billinghub.* TO 'billinghub'@'127.0.0.1' WITH GRANT OPTION;
+quit</code></pre></div>
+
+            <h2 id="env-setup-1">Setting Up .env <a class="anchor-link" href="#env-setup-1">#</a></h2>
+            <h3>Create the environment file</h3>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>cp .env.example .env</code></pre></div>
+            
+            <h3>Generate encryption key</h3>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>php artisan key:generate --force
+php artisan storage:link</code></pre></div>
+
+            <div class="callout callout-danger"><span class="callout-icon">🚨</span><div class="callout-body"><div class="callout-label">DANGER</div><p>Back up your encryption key (<code>APP_KEY</code> in <code>.env</code>) immediately. It encrypts all sensitive data. If lost, data becomes irrecoverable.</p></div></div>
+
+            <h3>Configure your database credentials</h3>
+            <p>Open <code>.env</code> in your editor and update these values:</p>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">.env</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>APP_URL=https://your-domain.com
+
+DB_DATABASE=billinghub
+DB_USERNAME=billinghub
+DB_PASSWORD=yourPassword</code></pre></div>
+
+            <h2 id="migrations">Setting Up the Database <a class="anchor-link" href="#migrations">#</a></h2>
+            <div class="callout callout-warning"><span class="callout-icon">⚠️</span><div class="callout-body"><div class="callout-label">WARNING</div><p>The migration command below may take a few minutes on first run. Do <strong>not</strong> interrupt the process.</p></div></div>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>php artisan migrate --force --seed</code></pre></div>
+
+            <h3>Initialize app settings</h3>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>php artisan app:init</code></pre></div>
+            
+            <h3>Create your admin account</h3>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>php artisan app:user:create</code></pre></div>
+
+            <h2 id="cron-service">Cronjob &amp; Queue Service <a class="anchor-link" href="#cron-service">#</a></h2>
+            <h3>Create the cronjob</h3>
+            <p>Edit the crontab for the webserver user to run the scheduler every minute:</p>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>sudo crontab -u www-data -e</code></pre></div>
+            <p>Add this line to the crontab:</p>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">cron</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>* * * * * php /var/www/billinghub/artisan schedule:run >> /dev/null 2>&amp;1</code></pre></div>
+
+            <h3>Create the queue worker service</h3>
+            <p>Create <code>/etc/systemd/system/billinghub.service</code> with the following content:</p>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">systemd</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>[Unit]
+Description=BillingHub Queue Worker
+
+[Service]
+User=www-data
+Group=www-data
+Restart=always
+ExecStart=/usr/bin/php /var/www/billinghub/artisan queue:work
+StartLimitInterval=180
+StartLimitBurst=30
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target</code></pre></div>
+
+            <h3>Enable and start services</h3>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>sudo systemctl enable --now billinghub.service
+sudo systemctl enable --now redis-server</code></pre></div>
+            <p>BillingHub is now installed. Continue to <strong>Webserver Setup</strong> to configure Nginx and SSL.</p>
+
+            <!-- pager nav -->
+            <div class="doc-pager">
+                <div class="pager-card prev" onclick="showPage('introduction')">
+                    <span class="pager-arrow">←</span>
+                    <div><div class="pager-label">Previous page</div><div class="pager-title">Introduction</div></div>
+                </div>
+                <div class="pager-card next" onclick="showPage('webserver')">
+                    <div><div class="pager-label">Next page</div><div class="pager-title">Webserver Setup</div></div>
+                    <span class="pager-arrow">→</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════ PAGE: WEBSERVER ═══════════ -->
+        <div class="doc-content" id="page-webserver">
+            <h1>Webserver Setup</h1>
+            <p>Configure Nginx to serve BillingHub on your domain.</p>
+            <h2 id="nginx-config">Nginx Configuration</h2>
+            <p>Create a new site config at <code>/etc/nginx/sites-available/billinghub</code>:</p>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">nginx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>server {
+    listen 80;
+    server_name your-domain.com;
+    root /var/www/billinghub/public;
+    index index.php;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+}</code></pre></div>
+            <h3>Enable the site</h3>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>ln -s /etc/nginx/sites-available/billinghub /etc/nginx/sites-enabled/
+nginx -t
+systemctl reload nginx</code></pre></div>
+            <div class="doc-pager">
+                <div class="pager-card prev" onclick="showPage('installation')"><span class="pager-arrow">←</span><div><div class="pager-label">Previous page</div><div class="pager-title">Installation</div></div></div>
+                <div class="pager-card next" onclick="showPage('ssl')"><div><div class="pager-label">Next page</div><div class="pager-title">SSL Certificates</div></div><span class="pager-arrow">→</span></div>
+            </div>
+        </div>
+
+        <!-- ═══════════ OTHER PAGES ═══════════ -->
+        <div class="doc-content" id="page-ssl">
+            <h1>Creating SSL Certificates</h1>
+            <p>Secure your BillingHub instance with a free Let's Encrypt certificate using Certbot.</p>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>apt install certbot python3-certbot-nginx
+certbot --nginx -d your-domain.com</code></pre></div>
+            <div class="doc-pager">
+                <div class="pager-card prev" onclick="showPage('webserver')"><span class="pager-arrow">←</span><div><div class="pager-label">Previous page</div><div class="pager-title">Webserver Setup</div></div></div>
+                <div class="pager-card next" onclick="showPage('updating')"><div><div class="pager-label">Next page</div><div class="pager-title">Updating</div></div><span class="pager-arrow">→</span></div>
+            </div>
+        </div>
+
+        <div class="doc-content" id="page-updating">
+            <h1>Updating BillingHub</h1>
+            <p>Pull the latest release and run migrations to stay up to date.</p>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>cd /var/www/billinghub
+git pull origin main
+composer install --no-dev --optimize-autoloader
+npm install && npm run build
+php artisan migrate --force
+systemctl restart billinghub.service</code></pre></div>
+            <div class="doc-pager">
+                <div class="pager-card prev" onclick="showPage('ssl')"><span class="pager-arrow">←</span><div><div class="pager-label">Previous page</div><div class="pager-title">SSL Certificates</div></div></div>
+                <div class="pager-card next" onclick="showPage('environment')"><div><div class="pager-label">Next page</div><div class="pager-title">.env Setup</div></div><span class="pager-arrow">→</span></div>
+            </div>
+        </div>
+
+        <div class="doc-content" id="page-environment">
+            <h1>.env Setup</h1>
+            <p>The <code>.env</code> file controls all runtime configuration for BillingHub.</p>
+            <div class="doc-pager">
+                <div class="pager-card prev" onclick="showPage('updating')"><span class="pager-arrow">←</span><div><div class="pager-label">Previous page</div><div class="pager-title">Updating</div></div></div>
+                <div class="pager-card next" onclick="showPage('database')"><div><div class="pager-label">Next page</div><div class="pager-title">Database</div></div><span class="pager-arrow">→</span></div>
+            </div>
+        </div>
+
+        <div class="doc-content" id="page-database">
+            <h1>Database</h1>
+            <p>BillingHub supports MySQL 8.0+ and MariaDB 10.6+. The database must use the <code>utf8mb4</code> character set.</p>
+            <div class="doc-pager">
+                <div class="pager-card prev" onclick="showPage('environment')"><span class="pager-arrow">←</span><div><div class="pager-label">Previous page</div><div class="pager-title">.env Setup</div></div></div>
+                <div class="pager-card next" onclick="showPage('email')"><div><div class="pager-label">Next page</div><div class="pager-title">Email</div></div><span class="pager-arrow">→</span></div>
+            </div>
+        </div>
+
+        <div class="doc-content" id="page-email">
+            <h1>Email Configuration</h1>
+            <p>Configure your mail driver in <code>.env</code>. BillingHub supports SMTP, Mailgun, Postmark, and SES.</p>
+            <div class="doc-pager">
+                <div class="pager-card prev" onclick="showPage('database')"><span class="pager-arrow">←</span><div><div class="pager-label">Previous</div><div class="pager-title">Database</div></div></div>
+                <div class="pager-card next" onclick="showPage('payments')"><div><div class="pager-label">Next</div><div class="pager-title">Payments</div></div><span class="pager-arrow">→</span></div>
+            </div>
+        </div>
+
+        <div class="doc-content" id="page-payments">
+            <h1>Payments</h1>
+            <p>BillingHub ships with Stripe, PayPal, and manual bank transfer support. Each gateway is configured via the admin panel.</p>
+            <div class="doc-pager">
+                <div class="pager-card prev" onclick="showPage('email')"><span class="pager-arrow">←</span><div><div class="pager-label">Previous</div><div class="pager-title">Email</div></div></div>
+                <div class="pager-card next" onclick="showPage('products')"><div><div class="pager-label">Next</div><div class="pager-title">Products</div></div><span class="pager-arrow">→</span></div>
+            </div>
+        </div>
+
+        <div class="doc-content" id="page-products">
+            <h1>Products</h1>
+            <p>Create service plans and one-time products for your clients.</p>
+            <div class="doc-pager">
+                <div class="pager-card prev" onclick="showPage('payments')"><span class="pager-arrow">←</span><div><div class="pager-label">Previous</div><div class="pager-title">Payments</div></div></div>
+                <div class="pager-card next" onclick="showPage('invoices')"><div><div class="pager-label">Next</div><div class="pager-title">Invoices</div></div><span class="pager-arrow">→</span></div>
+            </div>
+        </div>
+
+        <div class="doc-content" id="page-invoices">
+            <h1>Invoices</h1>
+            <p>BillingHub generates invoices automatically on the billing cycle or on demand from the admin panel.</p>
+            <div class="doc-pager">
+                <div class="pager-card prev" onclick="showPage('products')"><span class="pager-arrow">←</span><div><div class="pager-label">Previous</div><div class="pager-title">Products</div></div></div>
+                <div class="pager-card next" onclick="showPage('tickets')"><div><div class="pager-label">Next</div><div class="pager-title">Support Tickets</div></div><span class="pager-arrow">→</span></div>
+            </div>
+        </div>
+
+        <div class="doc-content" id="page-tickets">
+            <h1>Support Tickets</h1>
+            <p>The built-in ticket system lets clients open and track support requests from their client portal.</p>
+            <div class="doc-pager">
+                <div class="pager-card prev" onclick="showPage('invoices')"><span class="pager-arrow">←</span><div><div class="pager-label">Previous</div><div class="pager-title">Invoices</div></div></div>
+                <div class="pager-card next" onclick="showPage('sso')"><div><div class="pager-label">Next</div><div class="pager-title">Single Sign On</div></div><span class="pager-arrow">→</span></div>
+            </div>
+        </div>
+
+        <div class="doc-content" id="page-sso">
+            <h1>Single Sign On</h1>
+            <p>OAuth2-based SSO is supported for Google, GitHub, and any provider that implements the OAuth2 spec.</p>
+            <div class="doc-pager">
+                <div class="pager-card prev" onclick="showPage('tickets')"><span class="pager-arrow">←</span><div><div class="pager-label">Previous</div><div class="pager-title">Support Tickets</div></div></div>
+                <div class="pager-card next" onclick="showPage('cli')"><div><div class="pager-label">Next</div><div class="pager-title">CLI Reference</div></div><span class="pager-arrow">→</span></div>
+            </div>
+        </div>
+
+        <div class="doc-content" id="page-cli">
+            <h1>CLI Reference</h1>
+            <p>BillingHub exposes useful Artisan commands for maintenance tasks, user management, and diagnostics.</p>
+            <div class="doc-pager">
+                <div class="pager-card prev" onclick="showPage('sso')"><span class="pager-arrow">←</span><div><div class="pager-label">Previous</div><div class="pager-title">Single Sign On</div></div></div>
+                <div class="pager-card next" onclick="showPage('faq')"><div><div class="pager-label">Next</div><div class="pager-title">FAQ</div></div><span class="pager-arrow">→</span></div>
+            </div>
+        </div>
+
+        <div class="doc-content" id="page-faq">
+            <h1>FAQ</h1>
+            <p>Answers to the most common questions about BillingHub installation, licensing, and features.</p>
+            <div class="doc-pager">
+                <div class="pager-card prev" onclick="showPage('cli')"><span class="pager-arrow">←</span><div><div class="pager-label">Previous</div><div class="pager-title">CLI Reference</div></div></div>
+                <div class="pager-card next" onclick="showPage('pterodactyl')"><div><div class="pager-label">Next</div><div class="pager-title">Pterodactyl</div></div><span class="pager-arrow">→</span></div>
+            </div>
+        </div>
+
+        <div class="doc-content" id="page-pterodactyl">
+            <h1>Pterodactyl Integration</h1>
+            <p>Automatically provision game servers after successful checkout. Set your panel URL and API key in <code>.env</code>.</p>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">.env</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>PTERODACTYL_URL=https://panel.your-domain.com
+PTERODACTYL_API_KEY=your-application-api-key</code></pre></div>
+            <div class="doc-pager">
+                <div class="pager-card prev" onclick="showPage('faq')"><span class="pager-arrow">←</span><div><div class="pager-label">Previous</div><div class="pager-title">FAQ</div></div></div>
+                <div class="pager-card next" onclick="showPage('stripe')"><div><div class="pager-label">Next</div><div class="pager-title">Stripe</div></div><span class="pager-arrow">→</span></div>
+            </div>
+        </div>
+
+        <div class="doc-content" id="page-stripe">
+            <h1>Stripe</h1>
+            <p>Add your Stripe API keys to connect the payment gateway.</p>
+            <div class="doc-pager">
+                <div class="pager-card prev" onclick="showPage('pterodactyl')"><span class="pager-arrow">←</span><div><div class="pager-label">Previous</div><div class="pager-title">Pterodactyl</div></div></div>
+                <div class="pager-card next" onclick="showPage('paypal')"><div><div class="pager-label">Next</div><div class="pager-title">PayPal</div></div><span class="pager-arrow">→</span></div>
+            </div>
+        </div>
+
+        <div class="doc-content" id="page-paypal">
+            <h1>PayPal</h1>
+            <p>Add your PayPal client credentials to enable PayPal checkout.</p>
+            <div class="doc-pager">
+                <div class="pager-card prev" onclick="showPage('stripe')"><span class="pager-arrow">←</span><div><div class="pager-label">Previous</div><div class="pager-title">Stripe</div></div></div>
+                <div class="pager-card next" onclick="showPage('extensions')"><div><div class="pager-label">Next</div><div class="pager-title">Custom Extensions</div></div><span class="pager-arrow">→</span></div>
+            </div>
+        </div>
+
+        <div class="doc-content" id="page-extensions">
+            <h1>Custom Extensions</h1>
+            <p>Build your own modules and drop them into <code>app/Extensions/</code>. Each extension follows the provider pattern.</p>
+            <div class="doc-pager">
+                <div class="pager-card prev" onclick="showPage('paypal')"><span class="pager-arrow">←</span><div><div class="pager-label">Previous</div><div class="pager-title">PayPal</div></div></div>
+                <div class="pager-card next" onclick="showPage('queues')"><div><div class="pager-label">Next</div><div class="pager-title">Queue Workers</div></div><span class="pager-arrow">→</span></div>
+            </div>
+        </div>
+
+        <div class="doc-content" id="page-queues">
+            <h1>Queue Workers</h1>
+            <p>BillingHub relies on Laravel queues for email delivery, invoicing, and webhook processing. Redis is the recommended driver.</p>
+            <div class="doc-pager">
+                <div class="pager-card prev" onclick="showPage('extensions')"><span class="pager-arrow">←</span><div><div class="pager-label">Previous</div><div class="pager-title">Custom Extensions</div></div></div>
+                <div class="pager-card next" onclick="showPage('troubleshooting')"><div><div class="pager-label">Next</div><div class="pager-title">Troubleshooting</div></div><span class="pager-arrow">→</span></div>
+            </div>
+        </div>
+
+        <div class="doc-content" id="page-troubleshooting">
+            <h1>Troubleshooting</h1>
+            <p>Common fixes for installation and runtime issues.</p>
+            <div class="doc-pager">
+                <div class="pager-card prev" onclick="showPage('queues')"><span class="pager-arrow">←</span><div><div class="pager-label">Previous</div><div class="pager-title">Queue Workers</div></div></div>
+                <div class="pager-card next" onclick="showPage('changelog')"><div><div class="pager-label">Next</div><div class="pager-title">Changelog</div></div><span class="pager-arrow">→</span></div>
+            </div>
+        </div>
+
+        <div class="doc-content" id="page-changelog">
+            <h1>Changelog</h1>
+            <p><strong>v1.0.0</strong> — May 2026 — Initial public release.</p>
+            <div class="doc-pager">
+                <div class="pager-card prev" onclick="showPage('troubleshooting')"><span class="pager-arrow">←</span><div><div class="pager-label">Previous</div><div class="pager-title">Troubleshooting</div></div></div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ──── RIGHT TOC ──── -->
+    <aside class="docs-toc" id="docs-toc">
+        <div class="toc-title">On this page</div>
+        <ul class="toc-list" id="toc-list">
+            <!-- populated by JS -->
+        </ul>
+    </aside>
+
+</div>
+
+<!-- mobile sidebar toggle -->
+<button class="mobile-sidebar-toggle" id="mobile-toggle" aria-label="Toggle sidebar">☰</button>
+
+<script>
+    // ── Page data ──────────────────────────────────────────
+    const PAGE_META = {
+        introduction:  { group: 'Getting Started', label: 'Introduction' },
+        installation:  { group: 'Setting Up', label: 'Installation' },
+        webserver:     { group: 'Setting Up', label: 'Webserver Setup' },
+        ssl:           { group: 'Setting Up', label: 'SSL Certificates' },
+        updating:      { group: 'Setting Up', label: 'Updating' },
+        environment:   { group: 'Configuration', label: '.env Setup' },
+        database:      { group: 'Configuration', label: 'Database' },
+        email:         { group: 'Configuration', label: 'Email' },
+        payments:      { group: 'Configuration', label: 'Payments' },
+        products:      { group: 'Guides', label: 'Products' },
+        invoices:      { group: 'Guides', label: 'Invoices' },
+        tickets:       { group: 'Guides', label: 'Support Tickets' },
+        sso:           { group: 'Guides', label: 'Single Sign On' },
+        cli:           { group: 'Guides', label: 'CLI Reference' },
+        faq:           { group: 'Guides', label: 'FAQ' },
+        pterodactyl:   { group: 'Extensions', label: 'Pterodactyl' },
+        stripe:        { group: 'Extensions', label: 'Stripe' },
+        paypal:        { group: 'Extensions', label: 'PayPal' },
+        extensions:    { group: 'Extensions', label: 'Custom Extensions' },
+        queues:        { group: 'Advanced', label: 'Queue Workers' },
+        troubleshooting:{ group: 'Advanced', label: 'Troubleshooting' },
+        changelog:     { group: 'Advanced', label: 'Changelog' },
+    };
+
+    // ── Show page ──────────────────────────────────────────
+    function showPage(id, skipHashUpdate = false) {
+        // hide all
+        document.querySelectorAll('.doc-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.sidebar-link').forEach(el => el.classList.remove('active'));
+
+        const page = document.getElementById('page-' + id);
+        if (page) {
+            page.classList.add('active');
+            // Scroll to top only if it's a direct page switch (not anchored)
+            if (!skipHashUpdate) {
+                window.scrollTo({ top: 0, behavior: 'auto' });
+            }
+        }
+
+        const link = document.querySelector(`.sidebar-link[data-page="${id}"]`);
+        if (link) link.classList.add('active');
+
+        // breadcrumb
+        const meta = PAGE_META[id] || {};
+        const bc = document.getElementById('breadcrumb');
+        bc.innerHTML = `<a href="docs.html">Docs</a><span class="sep">›</span><span>${meta.group || ''}</span><span class="sep">›</span><span>${meta.label || id}</span>`;
+
+        // Update URL hash without causing a jump
+        if (!skipHashUpdate) {
+            history.pushState(null, null, '#' + id);
+        }
+
+        // close mobile sidebar
+        document.getElementById('docs-sidebar').classList.remove('open');
+
+        // rebuild TOC
+        buildTOC(page);
+    }
+
+    // ── Build TOC ──────────────────────────────────────────
+    function buildTOC(page) {
+        if (!page) return;
+        const toc = document.getElementById('toc-list');
+        const tocTitle = document.querySelector('.toc-title');
+        toc.innerHTML = '';
+        const headings = page.querySelectorAll('h2, h3');
+        
+        // Fade out content only, container stays to preserve layout width
+        if (headings.length === 0) {
+            if (tocTitle) tocTitle.style.opacity = '0';
+            toc.style.opacity = '0';
+            return;
+        }
+        
+        if (tocTitle) tocTitle.style.opacity = '1';
+        toc.style.opacity = '1';
+
+        headings.forEach(h => {
+            if (!h.id) return;
+            const li = document.createElement('li');
+            li.className = h.tagName === 'H3' ? 'toc-h3' : '';
+            const a = document.createElement('a');
+            a.href = '#' + h.id;
+            a.textContent = h.childNodes[0]?.textContent?.trim() || h.textContent.replace('#', '').trim();
+            a.addEventListener('click', e => {
+                e.preventDefault();
+                history.pushState(null, null, '#' + h.id);
+                const target = document.getElementById(h.id);
+                if (target) target.scrollIntoView({ behavior: 'smooth' });
+            });
+            li.appendChild(a);
+            toc.appendChild(li);
+        });
+    }
+
+    // ── TOC scroll spy ──────────────────────────────────────
+    function updateTOCSpy() {
+        const activePage = document.querySelector('.doc-content.active');
+        if (!activePage) return;
+        const headings = activePage.querySelectorAll('h2[id], h3[id]');
+        const tocLinks = document.querySelectorAll('.toc-list a');
+        let active = null;
+        headings.forEach(h => {
+            const rect = h.getBoundingClientRect();
+            if (rect.top <= 90) active = h.id;
+        });
+        tocLinks.forEach(a => {
+            a.classList.remove('active');
+            if (a.getAttribute('href') === '#' + active) a.classList.add('active');
+        });
+    }
+    window.addEventListener('scroll', updateTOCSpy, { passive: true });
+
+    // ── Copy buttons ───────────────────────────────────────
+    function copyCode(btn) {
+        const pre = btn.closest('.code-block').querySelector('pre code') ||
+                    btn.closest('.code-block').querySelector('pre');
+        navigator.clipboard.writeText(pre.textContent.trim()).then(() => {
+            btn.textContent = 'Copied!';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+        });
+    }
+
+    // ── Sidebar links ──────────────────────────────────────
+    document.querySelectorAll('.sidebar-link[data-page]').forEach(link => {
+        link.addEventListener('click', () => showPage(link.dataset.page));
+    });
+
+    // ── Code tabs ─────────────────────────────────────────
+    document.querySelectorAll('.code-tab-bar').forEach(bar => {
+        bar.querySelectorAll('.code-tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabId = btn.dataset.tab;
+                const container = btn.closest('.code-tabs');
+                container.querySelectorAll('.code-tab-btn').forEach(b => b.classList.remove('active'));
+                container.querySelectorAll('.code-tab-panel').forEach(p => p.classList.remove('active'));
+                btn.classList.add('active');
+                container.querySelector('#tab-' + tabId)?.classList.add('active');
+            });
+        });
+    });
+
+    // ── Mobile sidebar ────────────────────────────────────
+    document.getElementById('mobile-toggle').addEventListener('click', () => {
+        document.getElementById('docs-sidebar').classList.toggle('open');
+    });
+
+    const navToggleBtn = document.getElementById('nav-toggle-btn');
+    const navMobile = document.getElementById('nav-mobile');
+    if (navToggleBtn && navMobile) {
+        navToggleBtn.addEventListener('click', () => {
+            navMobile.classList.toggle('open');
+            navToggleBtn.classList.toggle('active');
+        });
+    }
+
+    // ── Docs Real-time Search ──────────────────────────────
+    const searchInput = document.querySelector('.topnav-search input');
+    if (searchInput) {
+        const sidebarLinks = document.querySelectorAll('.sidebar-link');
+        const sidebarSections = document.querySelectorAll('.sidebar-section');
+        
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            
+            sidebarLinks.forEach(link => {
+                const pageId = link.dataset.page;
+                const pageContent = document.getElementById('page-' + pageId);
+                const textContent = pageContent ? pageContent.textContent.toLowerCase() : '';
+                const linkText = link.textContent.toLowerCase();
+
+                if (!query || linkText.includes(query) || textContent.includes(query)) {
+                    link.style.display = '';
+                } else {
+                    link.style.display = 'none';
+                }
+            });
+
+            sidebarSections.forEach(sec => {
+                const hasVisibleLinks = Array.from(sec.querySelectorAll('.sidebar-link')).some(l => l.style.display !== 'none');
+                sec.style.display = hasVisibleLinks ? 'block' : 'none';
+            });
+        });
+
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const firstVisible = document.querySelector('.sidebar-link:not([style*="display: none"])');
+                if (firstVisible) {
+                    firstVisible.click();
+                    searchInput.blur();
+                }
+            }
+        });
+    }
+
+    // ── Hash-based Routing Engine (Initialization & Refresh) ──
+    function handleHashRouter() {
+        const hash = window.location.hash.substring(1); // removes the '#'
+        
+        // 1. If no hash, default to introduction (not installation)
+        if (!hash) {
+            showPage('introduction', true);
+            history.replaceState(null, null, '#introduction');
+            return;
+        }
+
+        // 2. If the hash exactly matches a full page ID (e.g., #ssl)
+        if (PAGE_META[hash]) {
+            showPage(hash, true);
+            return;
+        }
+
+        // 3. If the hash is a sub-section anchor (e.g., #nginx-config)
+        const targetAnchor = document.getElementById(hash);
+        if (targetAnchor) {
+            const parentPage = targetAnchor.closest('.doc-content');
+            if (parentPage) {
+                const pageId = parentPage.id.replace('page-', '');
+                showPage(pageId, true); // load parent page
+                
+                // Give the DOM a tiny fraction of a second to render, then scroll to the header
+                setTimeout(() => {
+                    targetAnchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 50);
+                return;
+            }
+        }
+        
+        // 4. Fallback if the hash is invalid
+        showPage('introduction', true);
+        history.replaceState(null, null, '#introduction');
+    }
+
+    // Listen to browser Back/Forward buttons
+    window.addEventListener('hashchange', handleHashRouter);
+
+    // Initial Load
+    window.addEventListener('DOMContentLoaded', () => {
+        // Handle URL search queries if they came from the homepage
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchQuery = urlParams.get('search');
+        
+        if (searchQuery && searchInput) {
+            searchInput.value = searchQuery;
+            searchInput.focus();
+            searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+            setTimeout(() => {
+                const firstVisible = document.querySelector('.sidebar-link:not([style*="display: none"])');
+                if (firstVisible) firstVisible.click();
+            }, 50);
+        } else {
+            // Otherwise, route based on the URL Hash
+            handleHashRouter();
+        }
+    });
+
+</script>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="index.html" class="nav-logo" style="color:white">
+                    <div class="nav-logo-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/></svg>
+                    </div>
+                    <span class="nav-logo-text" style="font-size:18px; font-weight:700; letter-spacing:-0.3px;">BillingHub</span>
+                </a>
+                <p>Open-source billing system for modern providers. Self-hosted, extensible, free.</p>
+            </div>
+            <div class="footer-col"><h5>Product</h5><a href="index.html#features">Features</a><a href="download.html">Download</a><a href="docs.html">Docs</a></div>
+            <div class="footer-col"><h5>Resources</h5><a href="docs.html">API</a><a href="docs.html">Guide</a><a href="docs.html">Extensions</a><a href="docs.html">Changelog</a></div>
+            <div class="footer-col"><h5>Legal</h5><a href="docs.html">License</a><a href="docs.html">Privacy</a><a href="docs.html">Support</a><a href="https://github.com" target="_blank">GitHub</a></div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 BillingHub. Open-source billing.</p>
+            <div class="footer-social">
+                <a href="https://github.com" target="_blank" title="GitHub">GH</a><a href="https://discord.gg" target="_blank" title="Discord">DC</a><a href="https://twitter.com" target="_blank" title="Twitter">TW</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>
