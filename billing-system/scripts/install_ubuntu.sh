@@ -33,6 +33,12 @@ require_command() {
     fi
 }
 
+install_node_20() {
+    echo "Installing Node.js 20..."
+    curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+    apt-get install -y nodejs
+}
+
 if [ "${EUID}" -ne 0 ]; then
     echo "Run this script with sudo or as root."
     exit 1
@@ -43,6 +49,17 @@ require_command composer
 require_command nginx
 require_command sed
 require_command mysql
+
+# Check Node.js version and install 20+ if needed
+if command -v node >/dev/null 2>&1; then
+    NODE_VERSION=$(node -v | cut -d'v' -f2 | cut -d'.' -f1)
+    if [ "$NODE_VERSION" -lt 20 ]; then
+        echo "Node.js version is too old (require 20+). Upgrading..."
+        install_node_20
+    fi
+else
+    install_node_20
+fi
 
 REPO_URL=$(prompt_default "Repository URL (leave blank if /var/www/billing-system already exists)" "")
 APP_URL=$(prompt_default "Application URL" "http://localhost")
@@ -126,10 +143,10 @@ GRANT ALL PRIVILEGES ON ${DB_NAME_SQL}.* TO '${DB_USER_SQL}'@'localhost';
 FLUSH PRIVILEGES;
 SQL
 
-if [ -f package-lock.json ] && command -v npm >/dev/null 2>&1; then
-    npm ci
-    npm run build
-elif command -v npm >/dev/null 2>&1; then
+# Clean and rebuild node modules (needed if Node.js was upgraded)
+if command -v npm >/dev/null 2>&1; then
+    echo "Installing Node.js dependencies..."
+    rm -rf node_modules package-lock.json
     npm install
     npm run build
 fi
