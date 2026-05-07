@@ -98,6 +98,7 @@
         .glass-effect {
             background: rgba(var(--card), 0.8);
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(var(--border), 0.5);
         }
 
