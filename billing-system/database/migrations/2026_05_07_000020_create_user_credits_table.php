@@ -24,8 +24,8 @@ return new class extends Migration
             $table->decimal('balance_before', 15, 4);
             $table->decimal('balance_after', 15, 4);
             $table->string('description')->nullable();
-            $table->foreignId('related_invoice_id')->nullable()->constrained()->onDelete('set null');
-            $table->foreignId('related_payment_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('related_invoice_id')->nullable()->constrained('invoices')->onDelete('set null');
+            $table->foreignId('related_payment_id')->nullable()->constrained('payments')->onDelete('set null');
             $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();
         });
