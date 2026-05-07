@@ -136,7 +136,8 @@ DB_NAME_SQL=$(sql_escape "$DB_NAME_SAFE")
 DB_USER_SQL=$(sql_escape "$DB_USER_SAFE")
 DB_PASSWORD_SQL=$(sql_escape "$DB_PASSWORD")
 
-mysql <<SQL
+# Use sudo mysql for root access (handles auth_socket plugin)
+sudo mysql <<SQL
 CREATE DATABASE IF NOT EXISTS ${DB_NAME_SQL} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 CREATE USER IF NOT EXISTS '${DB_USER_SQL}'@'localhost' IDENTIFIED BY '${DB_PASSWORD_SQL}';
 GRANT ALL PRIVILEGES ON ${DB_NAME_SQL}.* TO '${DB_USER_SQL}'@'localhost';
