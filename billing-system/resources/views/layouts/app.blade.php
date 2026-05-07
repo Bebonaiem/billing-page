@@ -130,157 +130,16 @@
 </head>
 <body class="font-sans antialiased transition-colors duration-300" data-theme="dark">
     <div id="app">
-        <!-- Navigation -->
-        @auth
-            <nav class="glass-effect border-b border-custom">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="flex justify-between h-16">
-                        <div class="flex">
-                            <!-- Logo -->
-                            <div class="flex-shrink-0 flex items-center">
-                                <a href="{{ route('home') }}" class="text-2xl font-bold accent-text flex items-center">
-                                    <svg class="w-8 h-8 mr-2 accent-bg rounded-lg p-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                    BillingHub
-                                </a>
-                            </div>
-                            
-                            <!-- Main Navigation -->
-                            <div class="hidden sm:ml-8 sm:flex sm:space-x-1">
-                                @if(Auth::user()->is_admin)
-                                    <a href="{{ route('admin.dashboard') }}" class="accent-bg-hover text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
-                                        Dashboard
-                                    </a>
-                                    <a href="{{ route('admin.orders.index') }}" class="text-secondary hover:text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
-                                        Orders
-                                    </a>
-                                    <a href="{{ route('admin.invoices.index') }}" class="text-secondary hover:text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
-                                        Invoices
-                                    </a>
-                                    <a href="{{ route('admin.users.index') }}" class="text-secondary hover:text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
-                                        Users
-                                    </a>
-                                @else
-                                    <a href="{{ route('client.dashboard') }}" class="accent-bg-hover text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
-                                        Dashboard
-                                    </a>
-                                    <a href="{{ route('client.services') }}" class="text-secondary hover:text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
-                                        Services
-                                    </a>
-                                    <a href="{{ route('client.invoices') }}" class="text-secondary hover:text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
-                                        Invoices
-                                    </a>
-                                    <a href="{{ route('client.tickets') }}" class="text-secondary hover:text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
-                                        Support
-                                    </a>
-                                @endif
-                            </div>
-                        </div>
-                        
-                        <!-- Right side buttons -->
-                        <div class="flex items-center space-x-3">
-                            <!-- Theme Toggle -->
-                            <button onclick="toggleTheme()" class="p-2 text-secondary hover:text-white rounded-lg transition-all duration-200">
-                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0018 9a9.003 9.003 0 01-4.646 4.646z"></path>
-                                </svg>
-                            </button>
-                            
-                            <!-- Notifications -->
-                            <button class="relative p-2 text-secondary hover:text-white rounded-lg transition-all duration-200">
-                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-                                </svg>
-                                <span class="absolute top-1 right-1 block h-2 w-2 rounded-full error-bg animate-pulse"></span>
-                            </button>
-                            
-                            <!-- Profile dropdown -->
-                            <div class="relative">
-                                <button class="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 border-2 border-custom p-0.5">
-                                    <img class="h-8 w-8 rounded-full" src="https://ui-avatars.com/api/?name={{ Auth::user()->name }}&color=3B82F6&background=1E293B" alt="{{ Auth::user()->name }}">
-                                </button>
-                            </div>
-                            
-                            <!-- Logout -->
-                            <form method="POST" action="{{ route('logout') }}" class="inline">
-                                @csrf
-                                <button type="submit" class="text-secondary hover:text-white text-sm font-medium px-3 py-2 rounded-lg transition-all duration-200">
-                                    Logout
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-        @else
-            <!-- Guest Navigation -->
-            <nav class="glass-effect border-b border-custom">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="flex justify-between h-16">
-                        <div class="flex">
-                            <div class="flex-shrink-0 flex items-center">
-                                <a href="{{ route('home') }}" class="text-2xl font-bold accent-text flex items-center">
-                                    <svg class="w-8 h-8 mr-2 accent-bg rounded-lg p-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                    BillingHub
-                                </a>
-                            </div>
-                            <div class="hidden sm:ml-8 sm:flex sm:space-x-1">
-                                <a href="{{ route('home') }}" class="accent-bg-hover text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
-                                    Home
-                                </a>
-                                <a href="{{ route('order') }}" class="text-secondary hover:text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
-                                    Services
-                                </a>
-                            </div>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <!-- Theme Toggle -->
-                            <button onclick="toggleTheme()" class="p-2 text-secondary hover:text-white rounded-lg transition-all duration-200">
-                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0018 9a9.003 9.003 0 01-4.646 4.646z"></path>
-                                </svg>
-                            </button>
-                            <a href="{{ route('login') }}" class="text-secondary hover:text-white text-sm font-medium px-4 py-2 rounded-lg transition-all duration-200">
-                                Sign in
-                            </a>
-                            <a href="{{ route('register') }}" class="accent-bg-hover text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
-                                Sign up
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-        @endauth
+        <!-- Header Component -->
+        @include('components.header')
 
         <!-- Page Content -->
         <main>
             @yield('content')
         </main>
 
-        <!-- Footer -->
-        <footer class="glass-effect border-t border-custom mt-12">
-            <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center">
-                    <p class="text-tertiary text-sm">
-                        © {{ date('Y') }} {{ config('app.name', 'BillingHub') }}. All rights reserved.
-                    </p>
-                    <div class="flex space-x-6">
-                        <a href="#" class="text-tertiary hover:text-white text-sm transition-colors duration-200">
-                            Privacy
-                        </a>
-                        <a href="#" class="text-tertiary hover:text-white text-sm transition-colors duration-200">
-                            Terms
-                        </a>
-                        <a href="#" class="text-tertiary hover:text-white text-sm transition-colors duration-200">
-                            Contact
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </footer>
+        <!-- Footer Component -->
+        @include('components.footer')
     </div>
 
     <!-- Theme Toggle Script -->

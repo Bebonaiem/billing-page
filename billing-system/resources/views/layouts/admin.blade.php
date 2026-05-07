@@ -85,7 +85,7 @@
 
                 <!-- Main content -->
                 <div class="flex-1 lg:ml-64">
-                    <!-- Top navigation -->
+                    <!-- Header Component -->
                     <header class="glass-effect border-b border-custom">
                         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                             <div class="flex justify-between items-center py-4">
@@ -130,6 +130,9 @@
                             @yield('content')
                         </div>
                     </main>
+                    
+                    <!-- Footer Component -->
+                    @include('components.footer')
                 </div>
             </div>
         </div>
