@@ -127,7 +127,7 @@
             <div class="border-t border-gray-200">
                 <div class="px-4 py-5 sm:p-6">
                     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                        @if(Auth::user()->email === 'admin@example.com' || Auth::user()->is_admin ?? false)
+                        @if(Auth::user()->is_admin)
                             <a href="{{ route('admin.users.index') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700">
                                 Manage Users
                             </a>

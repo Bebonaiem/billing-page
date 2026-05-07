@@ -95,7 +95,7 @@ Route::post('/login', function () {
         $user = Auth::user();
         
         // Redirect based on user role
-        if ($user->email === 'admin@example.com' || $user->is_admin ?? false) {
+        if ($user->is_admin) {
             return redirect()->intended(route('admin.dashboard'));
         }
         

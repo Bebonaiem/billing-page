@@ -32,7 +32,7 @@
                             
                             <!-- Main Navigation -->
                             <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-                                @if(Auth::user()->email === 'admin@example.com' || Auth::user()->is_admin ?? false)
+                                @if(Auth::user()->is_admin)
                                     <a href="{{ route('admin.dashboard') }}" class="text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 border-blue-500 text-sm font-medium">
                                         Dashboard
                                     </a>

@@ -21,7 +21,7 @@ class ClientMiddleware
         $user = Auth::user();
         
         // Redirect admins away from client areas
-        if ($user->email === 'admin@example.com' || ($user->is_admin ?? false)) {
+        if ($user->is_admin) {
             return redirect()->route('admin.dashboard');
         }
         

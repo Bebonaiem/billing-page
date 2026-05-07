@@ -20,8 +20,8 @@ class AdminMiddleware
         
         $user = Auth::user();
         
-        // Check if user is admin (modify this logic based on your user model)
-        if ($user->email !== 'admin@example.com' && !($user->is_admin ?? false)) {
+        // Check if user is admin
+        if (!$user->is_admin) {
             abort(403, 'Unauthorized access.');
         }
         
