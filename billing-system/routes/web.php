@@ -79,9 +79,55 @@ Route::get('/checkout', \App\Livewire\Checkout\Checkout::class)->name('checkout'
 |--------------------------------------------------------------------------
 */
 
+// Guest routes
+Route::get('/login', function () {
+    return view('auth.login');
+})->middleware('guest')->name('login');
+
+Route::post('/login', function () {
+    $credentials = request()->validate([
+        'email' => ['required', 'email'],
+        'password' => ['required'],
+    ]);
+
+    if (Auth::attempt($credentials, request()->boolean('remember'))) {
+        request()->session()->regenerate();
+        return redirect()->intended(route('client.dashboard'));
+    }
+
+    return back()->withErrors([
+        'email' => 'The provided credentials do not match our records.',
+    ])->onlyInput('email');
+})->middleware('guest');
+
+Route::get('/register', function () {
+    return view('auth.register');
+})->middleware('guest')->name('register');
+
+Route::post('/register', function () {
+    $validated = request()->validate([
+        'name' => ['required', 'string', 'max:255'],
+        'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+        'password' => ['required', 'string', 'min:8', 'confirmed'],
+    ]);
+
+    $user = \App\Models\User::create([
+        'name' => $validated['name'],
+        'email' => $validated['email'],
+        'password' => \Illuminate\Support\Facades\Hash::make($validated['password']),
+    ]);
+
+    Auth::login($user);
+
+    return redirect()->route('client.dashboard');
+})->middleware('guest');
+
+// Authenticated routes
 Route::middleware('auth')->group(function () {
     Route::post('/logout', function () {
         Auth::logout();
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
         return redirect('/');
     })->name('logout');
 });
