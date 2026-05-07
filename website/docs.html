@@ -230,8 +230,8 @@ systemctl start php8.2-fpm && systemctl enable php8.2-fpm</code></pre>
             <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code># Clone the repository
 mkdir -p /var/www
 cd /var/www
-git clone https://github.com/Bebonaiem/billing-page.git billing-system
-cd billing-system/billing-system
+git clone https://github.com/Bebonaiem/billing-page.git billinghub
+cd billinghub/billing-system
 
 # Run the automated installer
 sudo bash scripts/install_ubuntu.sh</code></pre></div>
@@ -249,8 +249,8 @@ sudo bash scripts/install_ubuntu.sh</code></pre></div>
             <h4>Clone the repository</h4>
             <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>mkdir -p /var/www
 cd /var/www
-git clone https://github.com/Bebonaiem/billing-page.git billing-system
-cd billing-system/billing-system</code></pre></div>
+git clone https://github.com/Bebonaiem/billing-page.git billinghub
+cd billinghub/billing-system</code></pre></div>
             
             <h4>Install dependencies</h4>
             <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>composer install --no-dev --optimize-autoloader
@@ -258,7 +258,7 @@ npm install && npm run build</code></pre></div>
             
             <h4>Set file permissions</h4>
             <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>chmod -R 775 storage bootstrap/cache
-chown -R www-data:www-data /var/www/billing-system/billing-system</code></pre></div>
+chown -R www-data:www-data /var/www/billinghub/billing-system</code></pre></div>
 
             <h2 id="database">Creating the Database <a class="anchor-link" href="#database">#</a></h2>
             <div class="callout callout-important"><span class="callout-icon">📌</span><div class="callout-body"><div class="callout-label">IMPORTANT</div><p>Replace <code>yourPassword</code> with a strong, unique password before running these commands.</p></div></div>
@@ -270,7 +270,7 @@ sudo mysql -e "FLUSH PRIVILEGES;"</code></pre></div>
 
             <h2 id="env-setup-1">Setting Up .env <a class="anchor-link" href="#env-setup-1">#</a></h2>
             <h3>Create the environment file</h3>
-            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>cd /var/www/billing-system/billing-system</code></pre></div>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>cd /var/www/billinghub/billing-system</code></pre></div>
             
             <h3>Generate encryption key</h3>
             <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>php artisan key:generate --force
@@ -292,7 +292,7 @@ DB_PASSWORD=yourPassword</code></pre></div>
 
             <h2 id="migrations">Setting Up the Database <a class="anchor-link" href="#migrations">#</a></h2>
             <div class="callout callout-warning"><span class="callout-icon">⚠️</span><div class="callout-body"><div class="callout-label">WARNING</div><p>The migration command below may take a few minutes on first run. Do <strong>not</strong> interrupt the process.</p></div></div>
-            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>cd /var/www/billing-system/billing-system
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>cd /var/www/billinghub/billing-system
 php artisan migrate --force
 php artisan db:seed --force</code></pre></div>
 
@@ -309,20 +309,20 @@ Password: password</code></pre></div>
             <h2 id="cron-service">Cronjob &amp; Queue Service <a class="anchor-link" href="#cron-service">#</a></h2>
             <h3>Create the cronjob</h3>
             <p>Add a cron job to run Laravel's scheduler every minute:</p>
-            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>(crontab -l 2>/dev/null; echo "* * * * * cd /var/www/billing-system/billing-system && /usr/bin/php artisan schedule:run >> /dev/null 2>&1") | crontab -</code></pre></div>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">cron</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>(crontab -l 2>/dev/null; echo "* * * * * cd /var/www/billinghub/billing-system && /usr/bin/php artisan schedule:run >> /dev/null 2>&1") | crontab -</code></pre></div>
 
             <h3>Create the queue worker service</h3>
             <p>Create <code>/etc/systemd/system/billing-system.service</code> with the following content:</p>
             <div class="code-block"><div class="code-block-header"><span class="code-lang">systemd</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>[Unit]
-Description=Billing System Queue Worker
+Description=Billing Hub Queue Worker
 After=network.target mysql.service mariadb.service
 
 [Service]
 Type=simple
 User=www-data
 Group=www-data
-WorkingDirectory=/var/www/billing-system/billing-system
-ExecStart=/usr/bin/php /var/www/billing-system/billing-system/artisan queue:work --sleep=3 --tries=3 --queue=default,emails
+WorkingDirectory=/var/www/billinghub/billing-system
+ExecStart=/usr/bin/php /var/www/billinghub/billing-system/artisan queue:work --sleep=3 --tries=3 --queue=default,emails
 Restart=always
 RestartSec=5
 
@@ -356,7 +356,7 @@ systemctl enable --now billing-system.service</code></pre></div>
             <div class="code-block"><div class="code-block-header"><span class="code-lang">nginx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>server {
     listen 80;
     server_name your-domain.com;
-    root /var/www/billing-system/billing-system/public;
+    root /var/www/billinghub/billing-system/public;
     index index.php index.html;
 
     add_header X-Frame-Options "SAMEORIGIN";
@@ -401,7 +401,7 @@ certbot --nginx -d your-domain.com</code></pre></div>
         <div class="doc-content" id="page-updating">
             <h1>Updating BillingHub</h1>
             <p>Pull the latest release and run migrations to stay up to date.</p>
-            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>cd /var/www/billing-system/billing-system
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>cd /var/www/billinghub/billing-system
 git pull origin main
 composer install --no-dev --optimize-autoloader
 npm install && npm run build
