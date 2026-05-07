@@ -266,7 +266,7 @@ chown -R www-data:www-data /var/www/billing-system/billing-system</code></pre></
 sudo mysql -e "CREATE DATABASE billing_db;"
 sudo mysql -e "CREATE USER 'billing_user'@'localhost' IDENTIFIED BY 'yourPassword';"
 sudo mysql -e "GRANT ALL PRIVILEGES ON billing_db.* TO 'billing_user'@'localhost';"
-sudo mysql -e "FLUSH PRIVILEGES;"
+sudo mysql -e "FLUSH PRIVILEGES;"</code></pre></div>
 
             <h2 id="env-setup-1">Setting Up .env <a class="anchor-link" href="#env-setup-1">#</a></h2>
             <h3>Create the environment file</h3>
