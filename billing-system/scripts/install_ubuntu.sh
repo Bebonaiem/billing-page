@@ -111,18 +111,26 @@ ENVEOF
     fi
 fi
 
-sed -i "s|^APP_NAME=.*$|APP_NAME=\"${APP_NAME}\"|" .env
-sed -i "s|^APP_ENV=.*$|APP_ENV=production|" .env
-sed -i "s|^APP_DEBUG=.*$|APP_DEBUG=false|" .env
-sed -i "s|^APP_URL=.*$|APP_URL=${APP_URL}|" .env
-sed -i "s|^DB_CONNECTION=.*$|DB_CONNECTION=mysql|" .env
-sed -i "s|^DB_HOST=.*$|DB_HOST=localhost|" .env
-sed -i "s|^DB_DATABASE=.*$|DB_DATABASE=${DB_NAME}|" .env
-sed -i "s|^DB_USERNAME=.*$|DB_USERNAME=${DB_USER}|" .env
-sed -i "s|^DB_PASSWORD=.*$|DB_PASSWORD=${DB_PASSWORD}|" .env
-sed -i "s|^QUEUE_CONNECTION=.*$|QUEUE_CONNECTION=database|" .env
-sed -i "s|^SESSION_DRIVER=.*$|SESSION_DRIVER=file|" .env
-sed -i "s|^CACHE_STORE=.*$|CACHE_STORE=file|" .env
+# Recreate .env with correct values
+echo "Setting up .env configuration..."
+cat > .env << ENVEOF
+APP_NAME="${APP_NAME}"
+APP_ENV=production
+APP_KEY=
+APP_DEBUG=false
+APP_URL=${APP_URL}
+
+DB_CONNECTION=mysql
+DB_HOST=localhost
+DB_PORT=3306
+DB_DATABASE=${DB_NAME}
+DB_USERNAME=${DB_USER}
+DB_PASSWORD=${DB_PASSWORD}
+
+QUEUE_CONNECTION=database
+SESSION_DRIVER=file
+CACHE_STORE=file
+ENVEOF
 
 sql_escape() {
     printf '%s' "${1//\'/\'\'}"
