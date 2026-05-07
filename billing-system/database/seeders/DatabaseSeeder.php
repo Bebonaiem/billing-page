@@ -16,11 +16,12 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Create default admin user
-        User::factory()->create([
+        User::updateOrCreate([
+            'email' => 'admin@example.com',
+        ], [
             'name' => 'Admin User',
             'first_name' => 'Admin',
             'last_name' => 'User',
-            'email' => 'admin@example.com',
             'status' => 'active',
         ]);
 
