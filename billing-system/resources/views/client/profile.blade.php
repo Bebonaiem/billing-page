@@ -3,93 +3,157 @@
 @section('content')
 <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
     <div class="px-4 py-6 sm:px-0">
-        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-            <div class="px-4 py-5 sm:px-6">
-                <h3 class="text-lg leading-6 font-medium text-gray-900">Profile Information</h3>
-                <p class="mt-1 max-w-2xl text-sm text-gray-500">Update your personal information and account settings.</p>
+        <!-- Profile Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
+                Profile Settings
+            </h1>
+            <p class="text-secondary text-lg">Manage your account information and preferences</p>
+        </div>
+
+        <!-- Profile Overview -->
+        <div class="glass-effect rounded-2xl border border-custom shadow-glow mb-8">
+            <div class="px-6 py-5 border-b border-custom">
+                <h3 class="text-xl font-semibold accent-text">Account Overview</h3>
             </div>
-            <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
-                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                    <div class="col-span-1">
-                        <label for="name" class="block text-sm font-medium text-gray-700">Full Name</label>
-                        <input type="text" name="name" id="name" value="{{ Auth::user()->name }}" 
-                               class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            <div class="p-6">
+                <div class="flex items-center space-x-6">
+                    <div class="w-24 h-24 accent-bg rounded-full flex items-center justify-center shadow-lg">
+                        <img class="w-20 h-20 rounded-full" src="https://ui-avatars.com/api/?name={{ Auth::user()->name }}&color=3B82F6&background=1E293B" alt="{{ Auth::user()->name }}">
                     </div>
-                    <div class="col-span-1">
-                        <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
-                        <input type="email" name="email" id="email" value="{{ Auth::user()->email }}" 
-                               class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    <div>
+                        <h4 class="text-2xl font-bold">{{ Auth::user()->name }}</h4>
+                        <p class="text-secondary">{{ Auth::user()->email }}</p>
+                        <div class="flex items-center mt-2 space-x-4">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium success-bg text-white">
+                                {{ Auth::user()->is_admin ? 'Administrator' : 'Client' }}
+                            </span>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium accent-bg text-white">
+                                {{ Auth::user()->status ?? 'Active' }}
+                            </span>
+                        </div>
                     </div>
-                </div>
-                
-                <div class="mt-6">
-                    <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        Save Changes
-                    </button>
                 </div>
             </div>
         </div>
 
-        <!-- Change Password Section -->
-        <div class="bg-white shadow overflow-hidden sm:rounded-lg mt-8">
-            <div class="px-4 py-5 sm:px-6">
-                <h3 class="text-lg leading-6 font-medium text-gray-900">Change Password</h3>
-                <p class="mt-1 max-w-2xl text-sm text-gray-500">Ensure your account is using a long, random password to stay secure.</p>
+        <!-- Personal Information -->
+        <div class="glass-effect rounded-2xl border border-custom shadow-glow mb-8">
+            <div class="px-6 py-5 border-b border-custom">
+                <h3 class="text-xl font-semibold accent-text">Personal Information</h3>
+                <p class="text-secondary text-sm mt-1">Update your personal details and contact information</p>
             </div>
-            <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
-                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                    <div class="col-span-1">
-                        <label for="current_password" class="block text-sm font-medium text-gray-700">Current Password</label>
-                        <input type="password" name="current_password" id="current_password" 
-                               class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            <div class="p-6">
+                <form class="space-y-6">
+                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                        <div>
+                            <label for="first_name" class="block text-sm font-medium text-secondary mb-2">First Name</label>
+                            <input type="text" id="first_name" name="first_name" value="{{ Auth::user()->first_name }}" 
+                                   class="w-full px-4 py-3 bg-card border border-custom rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                        </div>
+                        <div>
+                            <label for="last_name" class="block text-sm font-medium text-secondary mb-2">Last Name</label>
+                            <input type="text" id="last_name" name="last_name" value="{{ Auth::user()->last_name }}" 
+                                   class="w-full px-4 py-3 bg-card border border-custom rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                        </div>
                     </div>
-                    <div class="col-span-1 sm:col-span-2">
-                        <label for="new_password" class="block text-sm font-medium text-gray-700">New Password</label>
-                        <input type="password" name="new_password" id="new_password" 
-                               class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-secondary mb-2">Email Address</label>
+                        <input type="email" id="email" name="email" value="{{ Auth::user()->email }}" 
+                               class="w-full px-4 py-3 bg-card border border-custom rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
                     </div>
-                    <div class="col-span-1 sm:col-span-2">
-                        <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Confirm New Password</label>
-                        <input type="password" name="password_confirmation" id="password_confirmation" 
-                               class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    <div>
+                        <label for="phone" class="block text-sm font-medium text-secondary mb-2">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" value="{{ Auth::user()->phone ?? '' }}" 
+                               class="w-full px-4 py-3 bg-card border border-custom rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                               placeholder="Enter your phone number">
                     </div>
-                </div>
-                
-                <div class="mt-6">
-                    <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        Update Password
-                    </button>
-                </div>
+                    <div>
+                        <label for="address" class="block text-sm font-medium text-secondary mb-2">Address</label>
+                        <textarea id="address" name="address" rows="3" 
+                                  class="w-full px-4 py-3 bg-card border border-custom rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                                  placeholder="Enter your address">{{ Auth::user()->address ?? '' }}</textarea>
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="submit" class="accent-bg-hover text-white py-3 px-6 rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
 
-        <!-- Account Statistics -->
-        <div class="bg-white shadow overflow-hidden sm:rounded-lg mt-8">
-            <div class="px-4 py-5 sm:px-6">
-                <h3 class="text-lg leading-6 font-medium text-gray-900">Account Statistics</h3>
-                <p class="mt-1 max-w-2xl text-sm text-gray-500">Overview of your account activity.</p>
+        <!-- Security Settings -->
+        <div class="glass-effect rounded-2xl border border-custom shadow-glow mb-8">
+            <div class="px-6 py-5 border-b border-custom">
+                <h3 class="text-xl font-semibold accent-text">Security Settings</h3>
+                <p class="text-secondary text-sm mt-1">Update your password to keep your account secure</p>
             </div>
-            <div class="border-t border-gray-200">
-                <dl>
-                    <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500">Member Since</dt>
-                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ Auth::user()->created_at->format('F j, Y') }}</dd>
+            <div class="p-6">
+                <form class="space-y-6">
+                    <div>
+                        <label for="current_password" class="block text-sm font-medium text-secondary mb-2">Current Password</label>
+                        <input type="password" id="current_password" name="current_password" 
+                               class="w-full px-4 py-3 bg-card border border-custom rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                               placeholder="Enter current password">
                     </div>
-                    <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500">Total Services</dt>
-                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">5 Active Services</dd>
+                    <div>
+                        <label for="new_password" class="block text-sm font-medium text-secondary mb-2">New Password</label>
+                        <input type="password" id="new_password" name="new_password" 
+                               class="w-full px-4 py-3 bg-card border border-custom rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                               placeholder="Enter new password">
                     </div>
-                    <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500">Total Spent</dt>
-                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">$1,234.56</dd>
+                    <div>
+                        <label for="password_confirmation" class="block text-sm font-medium text-secondary mb-2">Confirm New Password</label>
+                        <input type="password" id="password_confirmation" name="password_confirmation" 
+                               class="w-full px-4 py-3 bg-card border border-custom rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                               placeholder="Confirm new password">
                     </div>
-                    <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500">Last Login</dt>
-                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ now()->format('F j, Y \a\t g:i A') }}</dd>
+                    <div class="flex justify-end">
+                        <button type="submit" class="accent-bg-hover text-white py-3 px-6 rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                            Update Password
+                        </button>
                     </div>
-                </dl>
+                </form>
             </div>
         </div>
-    </div>
+
+        <!-- Preferences -->
+        <div class="glass-effect rounded-2xl border border-custom shadow-glow">
+            <div class="px-6 py-5 border-b border-custom">
+                <h3 class="text-xl font-semibold accent-text">Preferences</h3>
+                <p class="text-secondary text-sm mt-1">Customize your experience</p>
+            </div>
+            <div class="p-6">
+                <div class="space-y-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="font-medium">Email Notifications</h4>
+                            <p class="text-sm text-secondary">Receive email updates about your account</p>
+                        </div>
+                        <button class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent accent-bg transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                            <span class="translate-x-5 inline-block h-5 w-5 transform rounded-full bg-white transition-transform duration-200 ease-in-out"></span>
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="font-medium">Two-Factor Authentication</h4>
+                            <p class="text-sm text-secondary">Add an extra layer of security to your account</p>
+                        </div>
+                        <button class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-600 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                            <span class="translate-x-0 inline-block h-5 w-5 transform rounded-full bg-white transition-transform duration-200 ease-in-out"></span>
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="font-medium">Marketing Emails</h4>
+                            <p class="text-sm text-secondary">Receive emails about new features and offers</p>
+                        </div>
+                        <button class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-600 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                            <span class="translate-x-0 inline-block h-5 w-5 transform rounded-full bg-white transition-transform duration-200 ease-in-out"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
 </div>
 @endsection

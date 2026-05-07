@@ -3,91 +3,105 @@
 @section('content')
 <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
     <div class="px-4 py-6 sm:px-0">
+        <!-- Back Navigation -->
         <div class="mb-6">
-            <a href="{{ route('client.tickets') }}" class="text-blue-600 hover:text-blue-800">&larr; Back to Tickets</a>
+            <a href="{{ route('client.tickets') }}" class="accent-text hover:opacity-80 transition-opacity duration-200 flex items-center">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+                Back to Tickets
+            </a>
         </div>
 
-        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-            <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+        <!-- Ticket Header -->
+        <div class="glass-effect rounded-2xl border border-custom shadow-glow mb-6">
+            <div class="px-6 py-5 border-b border-custom">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h1 class="text-2xl font-semibold text-gray-900">{{ $ticket->subject }}</h1>
-                        <p class="mt-1 text-sm text-gray-500">
+                        <h1 class="text-3xl font-bold mb-2">{{ $ticket->subject }}</h1>
+                        <p class="text-secondary">
                             Ticket #{{ $ticket->id }} • Opened {{ $ticket->created_at->format('M d, Y') }}
                         </p>
                     </div>
-                    <div class="flex items-center space-x-2">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-{{ $ticket->priority === 'urgent' ? 'red' : ($ticket->priority === 'high' ? 'orange' : ($ticket->priority === 'medium' ? 'yellow' : 'green')) }}-100 text-{{ $ticket->priority === 'urgent' ? 'red' : ($ticket->priority === 'high' ? 'orange' : ($ticket->priority === 'medium' ? 'yellow' : 'green')) }}-800">
+                    <div class="flex items-center space-x-3">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ $ticket->priority === 'urgent' ? 'error-bg' : ($ticket->priority === 'high' ? 'warning-bg' : ($ticket->priority === 'medium' ? 'bg-yellow-500' : 'success-bg')) }} text-white">
                             {{ ucfirst($ticket->priority) }}
                         </span>
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-{{ $ticket->status === 'open' ? 'green' : ($ticket->status === 'answered' ? 'blue' : 'gray') }}-100 text-{{ $ticket->status === 'open' ? 'green' : ($ticket->status === 'answered' ? 'blue' : 'gray') }}-800">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ $ticket->status === 'open' ? 'success-bg' : ($ticket->status === 'answered' ? 'accent-bg' : 'bg-gray-500') }} text-white">
                             {{ ucfirst($ticket->status) }}
                         </span>
                     </div>
                 </div>
             </div>
 
-            <div class="px-4 py-5 sm:p-6">
+            <div class="p-6">
                 <!-- Ticket Details -->
-                <div class="mb-8">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                        <div>
-                            <p class="font-medium text-gray-700">Department</p>
-                            <p class="text-gray-900">{{ ucfirst($ticket->department) }}</p>
-                        </div>
-                        <div>
-                            <p class="font-medium text-gray-700">Last Updated</p>
-                            <p class="text-gray-900">{{ $ticket->updated_at->format('M d, Y g:i A') }}</p>
-                        </div>
-                        <div>
-                            <p class="font-medium text-gray-700">Assigned To</p>
-                            <p class="text-gray-900">{{ $ticket->assigned_to ? $ticket->assigned_to->name : 'Unassigned' }}</p>
-                        </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div>
+                        <p class="text-sm font-medium text-secondary mb-1">Department</p>
+                        <p class="text-lg">{{ ucfirst($ticket->department) }}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-secondary mb-1">Last Updated</p>
+                        <p class="text-lg">{{ $ticket->updated_at->format('M d, Y g:i A') }}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-secondary mb-1">Assigned To</p>
+                        <p class="text-lg">{{ $ticket->assigned_to ? $ticket->assigned_to->name : 'Unassigned' }}</p>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <!-- Messages -->
-                <div class="space-y-6">
-                    @foreach ($ticket->replies as $reply)
-                        <div class="flex {{ $reply->user_id === Auth::id() ? 'justify-end' : 'justify-start' }}">
-                            <div class="max-w-2xl {{ $reply->user_id === Auth::id() ? 'bg-blue-100' : 'bg-gray-100' } rounded-lg px-4 py-3">
-                                <div class="flex items-center justify-between mb-2">
-                                    <p class="text-sm font-medium text-gray-900">
-                                        {{ $reply->user_id === Auth::id() ? 'You' : $reply->user->name }}
-                                    </p>
-                                    <p class="text-xs text-gray-500">
-                                        {{ $reply->created_at->format('M d, Y g:i A') }}
-                                    </p>
-                                </div>
-                                <p class="text-gray-700">{{ $reply->message }}</p>
+        <!-- Messages -->
+        <div class="glass-effect rounded-2xl border border-custom shadow-glow mb-6">
+            <div class="px-6 py-5 border-b border-custom">
+                <h3 class="text-xl font-semibold accent-text">Conversation</h3>
+            </div>
+            <div class="p-6 space-y-6 max-h-96 overflow-y-auto">
+                @foreach ($ticket->replies as $reply)
+                    <div class="flex {{ $reply->user_id === Auth::id() ? 'justify-end' : 'justify-start' }}">
+                        <div class="max-w-2xl {{ $reply->user_id === Auth::id() ? 'accent-bg' : 'bg-card' } rounded-2xl px-4 py-3 {{ $reply->user_id === Auth::id() ? 'text-white' : '' }}">
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="text-sm font-medium {{ $reply->user_id === Auth::id() ? 'text-blue-100' : 'text-white' }}">
+                                    {{ $reply->user_id === Auth::id() ? 'You' : $reply->user->name }}
+                                </p>
+                                <p class="text-xs {{ $reply->user_id === Auth::id() ? 'text-blue-200' : 'text-tertiary' }}">
+                                    {{ $reply->created_at->format('M d, Y g:i A') }}
+                                </p>
                             </div>
+                            <p class="{{ $reply->user_id === Auth::id() ? 'text-white' : 'text-secondary' }}">{{ $reply->message }}</p>
                         </div>
-                    @endforeach
-                </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
 
-                <!-- Reply Form -->
-                <div class="mt-8 border-t pt-6">
-                    <h3 class="text-lg font-medium text-gray-900 mb-4">Add Reply</h3>
-                    <form method="POST" action="{{ route('client.tickets.reply', $ticket) }}">
-                        @csrf
-                        <div class="space-y-4">
-                            <div>
-                                <label for="message" class="block text-sm font-medium text-gray-700">Your Message</label>
-                                <textarea name="message" id="message" rows="4" required
-                                          class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                          placeholder="Type your reply here..."></textarea>
-                                @error('message')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-                            <div class="flex justify-end">
-                                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-                                    Send Reply
-                                </button>
-                            </div>
+        <!-- Reply Form -->
+        <div class="glass-effect rounded-2xl border border-custom shadow-glow">
+            <div class="px-6 py-5 border-b border-custom">
+                <h3 class="text-xl font-semibold accent-text">Add Reply</h3>
+            </div>
+            <div class="p-6">
+                <form method="POST" action="{{ route('client.tickets.reply', $ticket) }}">
+                    @csrf
+                    <div class="space-y-4">
+                        <div>
+                            <label for="message" class="block text-sm font-medium text-secondary mb-2">Your Message</label>
+                            <textarea name="message" id="message" rows="4" required
+                                      class="w-full px-4 py-3 bg-card border border-custom rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                                      placeholder="Type your reply here..."></textarea>
+                            @error('message')
+                                <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
+                            @enderror
                         </div>
-                    </form>
-                </div>
+                        <div class="flex justify-end">
+                            <button type="submit" class="accent-bg-hover text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                                Send Reply
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
