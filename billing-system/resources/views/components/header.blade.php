@@ -42,7 +42,7 @@
                                 <img class="h-8 w-8 rounded-full" src="https://ui-avatars.com/api/?name={{ $user->name }}&color=3B82F6&background=1E293B" alt="{{ $user->name }}">
                             </button>
                             <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-48 glass-effect border border-custom rounded-xl shadow-glow py-2">
-                                <a href="{{ route('admin.settings.index') }}" class="block px-4 py-2 text-secondary hover:text-white hover:bg-card/50 transition-all duration-200">
+                                <a href="#" class="block px-4 py-2 text-secondary hover:text-white hover:bg-card/50 transition-all duration-200">
                                     <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                     </svg>
