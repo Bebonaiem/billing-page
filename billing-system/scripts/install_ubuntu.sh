@@ -62,7 +62,29 @@ fi
 cd "$APP_DIR"
 
 if [ ! -f .env ]; then
-    cp .env.example .env
+    if [ -f .env.example ]; then
+        cp .env.example .env
+    else
+        echo "Creating .env file..."
+        cat > .env << 'ENVEOF'
+APP_NAME="Billing System"
+APP_ENV=production
+APP_KEY=
+APP_DEBUG=false
+APP_URL=http://localhost
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=billing_system
+DB_USERNAME=billing_user
+DB_PASSWORD=billing_password
+
+QUEUE_CONNECTION=database
+SESSION_DRIVER=file
+CACHE_STORE=file
+ENVEOF
+    fi
 fi
 
 sed -i "s|^APP_NAME=.*$|APP_NAME=\"${APP_NAME}\"|" .env
