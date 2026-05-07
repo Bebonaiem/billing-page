@@ -301,10 +301,19 @@ php artisan db:seed --force</code></pre></div>
 php artisan view:cache</code></pre></div>
             
             <h3>Create admin account</h3>
-            <p>A default admin account is automatically created during seeding. Login with:</p>
-            <div class="code-block"><div class="code-block-header"><span class="code-lang">credentials</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>Email: admin@example.com
-Password: password</code></pre></div>
-            <div class="callout callout-important"><span class="callout-icon">📌</span><div class="callout-body"><div class="callout-label">IMPORTANT</div><p>Change the default password immediately after first login!</p></div></div>
+            <p>After installation, you need to create an admin account manually. First register a regular user account, then promote them to admin:</p>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code># Step 1: Register a user account through the web interface
+# Visit your site and click "Sign Up" to create an account
+
+# Step 2: Make the user an administrator
+cd /var/www/billinghub/billing-system
+php artisan make:admin user@example.com
+
+# Step 3: Verify admin status (optional)
+php artisan tinker
+$user = App\Models\User::where('email', 'user@example.com')->first();
+$user->is_admin; // Should return: true</code></pre></div>
+            <div class="callout callout-important"><span class="callout-icon">📌</span><div class="callout-body"><div class="callout-label">IMPORTANT</div><p>Only promote trusted users to admin status. Admin accounts have full system access.</p></div></div>
 
             <h2 id="cron-service">Cronjob &amp; Queue Service <a class="anchor-link" href="#cron-service">#</a></h2>
             <h3>Create the cronjob</h3>
@@ -491,6 +500,57 @@ systemctl restart billing-system.service</code></pre></div>
         <div class="doc-content" id="page-cli">
             <h1>CLI Reference</h1>
             <p>BillingHub exposes useful Artisan commands for maintenance tasks, user management, and diagnostics.</p>
+            
+            <h2 id="admin-commands">Admin Management</h2>
+            
+            <h3>make:admin</h3>
+            <p>Promote a user to administrator status.</p>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>php artisan make:admin {email}</code></pre></div>
+            
+            <h4>Examples:</h4>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code># Make john@example.com an admin
+php artisan make:admin john@example.com
+
+# Make sarah@company.com an admin
+php artisan make:admin sarah@company.com</code></pre></div>
+            
+            <div class="callout callout-important"><span class="callout-icon">📌</span><div class="callout-body"><div class="callout-label">IMPORTANT</div><p>The user must already exist in the database. Create the user account through the web interface first.</p></div></div>
+            
+            <h2 id="maintenance-commands">Maintenance Commands</h2>
+            
+            <h3>billing:generate-invoices</h3>
+            <p>Generate recurring invoices for all active services.</p>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>php artisan billing:generate-invoices</code></pre></div>
+            
+            <h3>billing:add-late-fees</h3>
+            <p>Add late fees to overdue invoices.</p>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>php artisan billing:add-late-fees</code></pre></div>
+            
+            <h3>billing:auto-suspend</h3>
+            <p>Suspend services with overdue payments.</p>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>php artisan billing:auto-suspend</code></pre></div>
+            
+            <h2 id="standard-laravel-commands">Standard Laravel Commands</h2>
+            
+            <p>All standard Laravel Artisan commands are available:</p>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code># Clear caches
+php artisan cache:clear
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
+
+# Database operations
+php artisan migrate
+php artisan db:seed
+
+# Queue management
+php artisan queue:work
+php artisan queue:restart
+
+# Optimization
+php artisan optimize
+php artisan optimize:clear</code></pre></div>
+            
             <div class="doc-pager">
                 <div class="pager-card prev" onclick="showPage('sso')"><span class="pager-arrow">←</span><div><div class="pager-label">Previous</div><div class="pager-title">Single Sign On</div></div></div>
                 <div class="pager-card next" onclick="showPage('faq')"><div><div class="pager-label">Next</div><div class="pager-title">FAQ</div></div><span class="pager-arrow">→</span></div>
@@ -579,7 +639,7 @@ node -v  # Should show v20.x.x or higher</code></pre></div>
             <h3>Permission Denied on Storage</h3>
             <div class="callout callout-warning"><span class="callout-icon">⚠️</span><div class="callout-body"><div class="callout-label">ERROR</div><p><code>Unable to write to storage directory</code></p></div></div>
             <p><strong>Solution:</strong> Set correct ownership and permissions:</p>
-            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>cd /var/www/billing-system/billing-system
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>cd /var/www/billinghub/billing-system
 chown -R www-data:www-data storage bootstrap/cache
 chmod -R 775 storage bootstrap/cache</code></pre></div>
 
@@ -602,7 +662,7 @@ ls -la /var/run/php/php8.2-fpm.sock</code></pre></div>
 sudo mysql -e "DROP DATABASE billing_db; CREATE DATABASE billing_db;"
 
 # Re-run migrations
-cd /var/www/billing-system/billing-system
+cd /var/www/billinghub/billing-system
 php artisan migrate:fresh --force
 php artisan db:seed --force</code></pre></div>
 
