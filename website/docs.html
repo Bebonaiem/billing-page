@@ -301,19 +301,27 @@ php artisan db:seed --force</code></pre></div>
 php artisan view:cache</code></pre></div>
             
             <h3>Create admin account</h3>
-            <p>After installation, you need to create an admin account manually. First register a regular user account, then promote them to admin:</p>
-            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code># Step 1: Register a user account through the web interface
-# Visit your site and click "Sign Up" to create an account
-
-# Step 2: Make the user an administrator
-cd /var/www/billinghub/billing-system
-php artisan make:admin user@example.com
-
-# Step 3: Verify admin status (optional)
-php artisan tinker
-$user = App\Models\User::where('email', 'user@example.com')->first();
-$user->is_admin; // Should return: true</code></pre></div>
-            <div class="callout callout-important"><span class="callout-icon">📌</span><div class="callout-body"><div class="callout-label">IMPORTANT</div><p>Only promote trusted users to admin status. Admin accounts have full system access.</p></div></div>
+            <p>After installation, use the interactive command to create users or promote existing users to admin:</p>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>cd /var/www/billinghub/billing-system
+php artisan make:admin</code></pre></div>
+            
+            <p>The command will guide you through creating a new user or promoting an existing user:</p>
+            
+            <h4>Option 1: Create New User</h4>
+            <p>The command will prompt for:</p>
+            <ul>
+                <li>First name</li>
+                <li>Last name</li>
+                <li>Email address</li>
+                <li>Password (entered securely)</li>
+                <li>Role (admin or user)</li>
+            </ul>
+            
+            <h4>Option 2: Promote Existing User</h4>
+            <p>The command will ask for the user's email and let you change their role.</p>
+            
+            <div class="callout callout-tip"><span class="callout-icon">💡</span><div class="callout-body"><div class="callout-label">TIP</div><p>You can create both admin and regular users with this command. Choose the appropriate role based on the user's access level.</p></div></div>
+            <div class="callout callout-important"><span class="callout-icon">📌</span><div class="callout-body"><div class="callout-label">IMPORTANT</div><p>Only assign admin status to trusted users. Admin accounts have full system access including user management, billing, and system settings.</p></div></div>
 
             <h2 id="cron-service">Cronjob &amp; Queue Service <a class="anchor-link" href="#cron-service">#</a></h2>
             <h3>Create the cronjob</h3>
@@ -504,17 +512,41 @@ systemctl restart billing-system.service</code></pre></div>
             <h2 id="admin-commands">Admin Management</h2>
             
             <h3>make:admin</h3>
-            <p>Promote a user to administrator status.</p>
-            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>php artisan make:admin {email}</code></pre></div>
+            <p>Interactive user management command to create new users or promote existing users to administrator status.</p>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>php artisan make:admin</code></pre></div>
             
-            <h4>Examples:</h4>
-            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code># Make john@example.com an admin
-php artisan make:admin john@example.com
+            <h4>Features:</h4>
+            <ul>
+                <li>Create new users with all required information</li>
+                <li>Promote existing users to admin or demote to regular user</li>
+                <li>Interactive prompts for user details (name, email, password, role)</li>
+                <li>Input validation and error handling</li>
+                <li>Secure password entry</li>
+            </ul>
+            
+            <h4>Interactive Flow:</h4>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>=== User Management ===
+What would you like to do?
+❯ Create a new user
+  Promote existing user to admin
 
-# Make sarah@company.com an admin
-php artisan make:admin sarah@company.com</code></pre></div>
+=== Create New User ===
+First name: John
+Last name: Doe
+Email address: john@example.com
+Password: ****
+Confirm password: ****
+Select user role:
+❯ Administrator (full access)
+  Regular user (limited access)
+
+✅ User created successfully!
+Name: John Doe
+Email: john@example.com
+Role: Administrator
+Status: active</code></pre></div>
             
-            <div class="callout callout-important"><span class="callout-icon">📌</span><div class="callout-body"><div class="callout-label">IMPORTANT</div><p>The user must already exist in the database. Create the user account through the web interface first.</p></div></div>
+            <div class="callout callout-tip"><span class="callout-icon">�</span><div class="callout-body"><div class="callout-label">TIP</div><p>This command can create both admin and regular users. Use it to quickly set up initial admin accounts or manage user roles without accessing the web interface.</p></div></div>
             
             <h2 id="maintenance-commands">Maintenance Commands</h2>
             
