@@ -217,7 +217,7 @@ quit</code></pre></div>
 
             <h2 id="env-setup-1">Setting Up .env <a class="anchor-link" href="#env-setup-1">#</a></h2>
             <h3>Create the environment file</h3>
-            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>cd /root/billinghub/billing-system
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>cd /var/www/billinghub/billing-system
 cp .env.example .env</code></pre></div>
             
             <h3>Generate encryption key</h3>
@@ -236,7 +236,7 @@ DB_PASSWORD=yourPassword</code></pre></div>
 
             <h2 id="migrations">Setting Up the Database <a class="anchor-link" href="#migrations">#</a></h2>
             <div class="callout callout-warning"><span class="callout-icon">⚠️</span><div class="callout-body"><div class="callout-label">WARNING</div><p>The migration command below may take a few minutes on first run. Do <strong>not</strong> interrupt the process.</p></div></div>
-            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>cd /root/billinghub/billing-system
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>cd /var/www/billinghub/billing-system
 php artisan migrate --force --seed</code></pre></div>
 
             <h3>Initialize app settings</h3>
@@ -338,7 +338,7 @@ certbot --nginx -d your-domain.com</code></pre></div>
         <div class="doc-content" id="page-updating">
             <h1>Updating BillingHub</h1>
             <p>Pull the latest release and run migrations to stay up to date.</p>
-            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>cd /root/billinghub/billing-system
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>cd /var/www/billinghub/billing-system
 git pull origin main
 composer install --no-dev --optimize-autoloader
 npm install && npm run build
