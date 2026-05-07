@@ -128,8 +128,21 @@
         }
     </style>
 </head>
-<body class="font-sans antialiased transition-colors duration-300" data-theme="dark">
-    <div id="app">
+<body class="bg-background text-foreground antialiased">
+    <!-- Particle Effects -->
+    <div class="particle-container">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+    
+    <div id="app" class="min-h-screen particle-bg">
         <!-- Header Component -->
         @include('components.header')
 
