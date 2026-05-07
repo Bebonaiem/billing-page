@@ -254,8 +254,7 @@ Password: (check database seeders for initial password setup)</code></pre></div>
             <h3>Create the cronjob</h3>
             <p>Edit the crontab for the webserver user to run the scheduler every minute:</p>
             <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>sudo crontab -u www-data -e</code></pre></div>
-            <div class="code-block"><div class="code-block-header"><span class="code-lang">cron</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>* * * * * /usr/bin/php /var/www/billinghub/billing-system/artisan schedule:run >> /dev/null 2&amp;1</code></pre></div>
-            <div class="code-block"><div class="code-block-header"><span class="code-lang">cron</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>* * * * * /usr/bin/php /var/www/billinghub/artisan schedule:run >> /dev/null 2>&amp;1</code></pre></div>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">cron</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>* * * * * /usr/bin/php /var/www/billinghub/billing-system/artisan schedule:run >> /dev/null 2>&amp;1</code></pre></div>
 
             <h3>Create the queue worker service</h3>
             <p>Create <code>/etc/systemd/system/billinghub.service</code> with the following content:</p>
@@ -265,8 +264,8 @@ Description=BillingHub Queue Worker
 [Service]
 User=www-data
 Group=www-data
-Restart=alwaysbilling-system/
-ExecStart=/usr/bin/php /var/www/billinghub/artisan queue:work
+Restart=always
+ExecStart=/usr/bin/php /var/www/billinghub/billing-system/artisan queue:work
 StartLimitInterval=180
 StartLimitBurst=30
 RestartSec=5s
@@ -300,8 +299,8 @@ sudo systemctl enable --now redis-server</code></pre></div>
             <p>Create a new site config at <code>/etc/nginx/sites-available/billinghub</code>:</p>
             <div class="code-block"><div class="code-block-header"><span class="code-lang">nginx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>server {
     listen 80;
-    server_name your-domain.cbilling-system/om;
-    root /var/www/billinghub/public;
+    server_name your-domain.com;
+    root /var/www/billinghub/billing-system/public;
     index index.php;
 
     location / {
