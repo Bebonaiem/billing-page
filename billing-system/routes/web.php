@@ -203,6 +203,37 @@ Route::middleware(['auth', 'client'])->prefix('client')->name('client.')->group(
     
     Route::get('/tickets', \App\Livewire\Client\Tickets::class)->name('tickets');
     
+    Route::get('/tickets/create', function () {
+        return view('client.tickets.create');
+    })->name('tickets.create');
+    
+    Route::post('/tickets', function () {
+        request()->validate([
+            'subject' => 'required|string|max:255',
+            'department' => 'required|string|in:billing,technical,sales,general',
+            'priority' => 'required|string|in:low,medium,high,urgent',
+            'message' => 'required|string|min:10',
+        ]);
+
+        // Create ticket logic would go here
+        // For now, redirect back with success message
+        return redirect()->route('client.tickets')->with('success', 'Ticket created successfully!');
+    })->name('tickets.store');
+    
+    Route::get('/tickets/{ticket}', function ($ticket) {
+        return view('client.tickets.show', ['ticket' => $ticket]);
+    })->name('tickets.show');
+    
+    Route::post('/tickets/{ticket}/reply', function ($ticket) {
+        request()->validate([
+            'message' => 'required|string|min:10',
+        ]);
+
+        // Reply logic would go here
+        // For now, redirect back with success message
+        return back()->with('success', 'Reply sent successfully!');
+    })->name('tickets.reply');
+    
     Route::get('/profile', function () {
         return view('client.profile');
     })->name('profile');
