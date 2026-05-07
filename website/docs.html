@@ -166,59 +166,111 @@
                     <button class="code-tab-btn" data-tab="debian">Debian</button>
                 </div>
                 <div class="code-tab-panel active" id="tab-ubuntu24">
-<pre><code>apt -y install software-properties-common curl apt-transport-https ca-certificates gnupg
-LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php
-LC_ALL=C.UTF-8 add-apt-repository -y ppa:chris-lea/node.js
-curl -sSL https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | sudo bash -s -- --mariadb-server-version="mariadb-10.11"
-apt update
-apt -y install php8.2 php8.2-{common,cli,gd,mysql,mbstring,bcmath,xml,fpm,curl,zip,intl,redis} mariadb-server nginx tar unzip git redis-server nodejs composer</code></pre>
+<pre><code># Update system
+apt update && apt upgrade -y
+
+# Install PHP 8.2, MySQL, Nginx, Git, Composer, Node.js
+apt install -y nginx git unzip curl php8.2-fpm php8.2-cli php8.2-mysql \
+    php8.2-xml php8.2-curl php8.2-mbstring php8.2-zip php8.2-bcmath \
+    php8.2-intl composer mariadb-server
+
+# Install Node.js 20+
+curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+apt install -y nodejs
+
+# Start services
+systemctl start mariadb && systemctl enable mariadb
+systemctl start nginx && systemctl enable nginx
+systemctl start php8.2-fpm && systemctl enable php8.2-fpm</code></pre>
                 </div>
                 <div class="code-tab-panel" id="tab-ubuntu22">
-<pre><code>apt -y install software-properties-common curl apt-transport-https ca-certificates gnupg
-LC_ALL=C.UTF-8 add-apt-repository -y ppa:chris-lea/node.js
-apt update
-apt -y install php8.2 php8.2-{common,cli,gd,mysql,mbstring,bcmath,xml,fpm,curl,zip,intl,redis} mariadb-server nginx tar unzip git redis-server nodejs
-apt -y install php8.2 php8.2-{common,cli,gd,mysql,mbstring,bcmath,xml,fpm,curl,zip,intl,redis} mariadb-server nginx tar unzip git redis-server nodejs npm composer</code></pre>
+<pre><code># Update system
+apt update && apt upgrade -y
+
+# Install dependencies
+apt install -y nginx git unzip curl php8.2-fpm php8.2-cli php8.2-mysql \
+    php8.2-xml php8.2-curl php8.2-mbstring php8.2-zip php8.2-bcmath \
+    php8.2-intl composer mariadb-server
+
+# Install Node.js 20+
+curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+apt install -y nodejs
+
+# Start services
+systemctl start mariadb && systemctl enable mariadb
+systemctl start nginx && systemctl enable nginx
+systemctl start php8.2-fpm && systemctl enable php8.2-fpm</code></pre>
                 </div>
                 <div class="code-tab-panel" id="tab-debian">
-<pre><code>apt -y install software-properties-common curl ca-certificates gnupg2 sudo lsb-release
-echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/sury-php.list
-curl -fsSL https://deb.nodesource.com/setup_20.x | sudo bash -
-apt update
-curl -sSL https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | sudo bash -s -- --mariadb-server-version="mariadb-10.11"
-apt install -y php8.2 php8.2-{common,cli,gd,mysql,mbstring,bcmath,xml,fpm,curl,zip,intl,redis} mariadb-server nginx tar unzip git redis-server nodejs
-apt install -y php8.2 php8.2-{common,cli,gd,mysql,mbstring,bcmath,xml,fpm,curl,zip,intl,redis} mariadb-server nginx tar unzip git redis-server nodejs npm composer</code></pre>
+<pre><code># Update system
+apt update && apt upgrade -y
+
+# Install dependencies  
+apt install -y nginx git unzip curl php8.2-fpm php8.2-cli php8.2-mysql \
+    php8.2-xml php8.2-curl php8.2-mbstring php8.2-zip php8.2-bcmath \
+    php8.2-intl composer mariadb-server
+
+# Install Node.js 20+
+curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+apt install -y nodejs
+
+# Start services
+systemctl start mariadb && systemctl enable mariadb
+systemctl start nginx && systemctl enable nginx
+systemctl start php8.2-fpm && systemctl enable php8.2-fpm</code></pre>
                 </div>
             </div>
 
             <h2 id="installing">Installing <a class="anchor-link" href="#installing">#</a></h2>
-            <h3>Clone the repository</h3>
+            
+            <div class="callout callout-tip"><span class="callout-icon">⭐</span><div class="callout-body"><div class="callout-label">RECOMMENDED: Automated Installer</div><p>Use our automated installer script for a one-command setup. See <span style="color:var(--primary);cursor:pointer" onclick="showPage('installation')">Installation Methods</span> below.</p></div></div>
+
+            <h3>Option A: Automated Installation (Recommended)</h3>
+            <p>The installer script handles everything automatically:</p>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code># Clone the repository
+mkdir -p /var/www
+cd /var/www
+git clone https://github.com/Bebonaiem/billing-page.git billing-system
+cd billing-system/billing-system
+
+# Run the automated installer
+sudo bash scripts/install_ubuntu.sh</code></pre></div>
+            <p>The script will prompt you for:</p>
+            <ul>
+                <li>Application URL (e.g., <code>https://your-domain.com</code> or <code>http://localhost</code>)</li>
+                <li>Database name, username, and password</li>
+                <li>Admin account details (name, email, password)</li>
+            </ul>
+            <p>The installer automatically configures Nginx, creates the database, runs migrations, and sets up the queue worker.</p>
+
+            <h3>Option B: Manual Installation</h3>
+            <p>If you prefer to set up manually, follow these steps:</p>
+            
+            <h4>Clone the repository</h4>
             <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>mkdir -p /var/www
 cd /var/www
-git clone https://github.com/Bebonaiem/billing-page.git billinghub
-cd billinghub/billing-system</code></pre></div>
+git clone https://github.com/Bebonaiem/billing-page.git billing-system
+cd billing-system/billing-system</code></pre></div>
             
-            <h3>Install dependencies</h3>
+            <h4>Install dependencies</h4>
             <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>composer install --no-dev --optimize-autoloader
 npm install && npm run build</code></pre></div>
             
-            <h3>Set file permissions</h3>
+            <h4>Set file permissions</h4>
             <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>chmod -R 775 storage bootstrap/cache
-chown -R www-data:www-data /root/billinghub/billing-system</code></pre></div>
+chown -R www-data:www-data /var/www/billing-system/billing-system</code></pre></div>
 
             <h2 id="database">Creating the Database <a class="anchor-link" href="#database">#</a></h2>
             <div class="callout callout-important"><span class="callout-icon">📌</span><div class="callout-body"><div class="callout-label">IMPORTANT</div><p>Replace <code>yourPassword</code> with a strong, unique password before running these commands.</p></div></div>
-            <div class="code-block"><div class="code-block-header"><span class="code-lang">mysql</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>mysql -u root -p
-CREATE USER 'billinghub'@'127.0.0.1' IDENTIFIED BY 'yourPassword';
-CREATE DATABASE billinghub;
-GRANT ALL PRIVILEGES ON billinghub.* TO 'billinghub'@'127.0.0.1' WITH GRANT OPTION;
-FLUSH PRIVILEGES;
-quit</code></pre></div>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code># Create database using sudo (handles auth_socket authentication)
+sudo mysql -e "CREATE DATABASE billing_db;"
+sudo mysql -e "CREATE USER 'billing_user'@'localhost' IDENTIFIED BY 'yourPassword';"
+sudo mysql -e "GRANT ALL PRIVILEGES ON billing_db.* TO 'billing_user'@'localhost';"
+sudo mysql -e "FLUSH PRIVILEGES;"
 
             <h2 id="env-setup-1">Setting Up .env <a class="anchor-link" href="#env-setup-1">#</a></h2>
             <h3>Create the environment file</h3>
-            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>cd /var/www/billinghub/billing-system
-cp .env.example .env</code></pre></div>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>cd /var/www/billing-system/billing-system</code></pre></div>
             
             <h3>Generate encryption key</h3>
             <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>php artisan key:generate --force
@@ -230,52 +282,56 @@ php artisan storage:link</code></pre></div>
             <p>Open <code>.env</code> in your editor and update these values:</p>
             <div class="code-block"><div class="code-block-header"><span class="code-lang">.env</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>APP_URL=https://your-domain.com
 
-DB_DATABASE=billinghub
-DB_USERNAME=billinghub
+# IMPORTANT: Use 'localhost' (not 127.0.0.1) for Unix socket connection
+DB_CONNECTION=mysql
+DB_HOST=localhost
+DB_PORT=3306
+DB_DATABASE=billing_db
+DB_USERNAME=billing_user
 DB_PASSWORD=yourPassword</code></pre></div>
 
             <h2 id="migrations">Setting Up the Database <a class="anchor-link" href="#migrations">#</a></h2>
             <div class="callout callout-warning"><span class="callout-icon">⚠️</span><div class="callout-body"><div class="callout-label">WARNING</div><p>The migration command below may take a few minutes on first run. Do <strong>not</strong> interrupt the process.</p></div></div>
-            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>cd /var/www/billinghub/billing-system
-php artisan migrate --force --seed</code></pre></div>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>cd /var/www/billing-system/billing-system
+php artisan migrate --force
+php artisan db:seed --force</code></pre></div>
 
-            <h3>Initialize app settings</h3>
-            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>php artisan app:init</code></pre></div>
+            <h3>Optimize and cache</h3>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>php artisan optimize
+php artisan view:cache</code></pre></div>
             
-            <h3>Create admin account (optional)</h3>
-            <p>A default admin account is automatically created during migration with the following credentials:</p>
+            <h3>Create admin account</h3>
+            <p>A default admin account is automatically created during seeding. Login with:</p>
             <div class="code-block"><div class="code-block-header"><span class="code-lang">credentials</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>Email: admin@example.com
-Password: (check database seeders for initial password setup)</code></pre></div>
-            <p>To create an additional admin account or replace the default one, run:</p>
-            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>php artisan app:user:create</code></pre></div>
-            <p>This command will prompt you for the user's email, name, and password.</p>
+Password: password</code></pre></div>
+            <div class="callout callout-important"><span class="callout-icon">📌</span><div class="callout-body"><div class="callout-label">IMPORTANT</div><p>Change the default password immediately after first login!</p></div></div>
 
             <h2 id="cron-service">Cronjob &amp; Queue Service <a class="anchor-link" href="#cron-service">#</a></h2>
             <h3>Create the cronjob</h3>
-            <p>Edit the crontab for the webserver user to run the scheduler every minute:</p>
-            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>sudo crontab -u www-data -e</code></pre></div>
-            <div class="code-block"><div class="code-block-header"><span class="code-lang">cron</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>* * * * * /usr/bin/php /root/billinghub/billing-system/artisan schedule:run >> /dev/null 2&amp;1</code></pre></div>
+            <p>Add a cron job to run Laravel's scheduler every minute:</p>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>(crontab -l 2>/dev/null; echo "* * * * * cd /var/www/billing-system/billing-system && /usr/bin/php artisan schedule:run >> /dev/null 2>&1") | crontab -</code></pre></div>
 
             <h3>Create the queue worker service</h3>
-            <p>Create <code>/etc/systemd/system/billinghub.service</code> with the following content:</p>
+            <p>Create <code>/etc/systemd/system/billing-system.service</code> with the following content:</p>
             <div class="code-block"><div class="code-block-header"><span class="code-lang">systemd</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>[Unit]
-Description=BillingHub Queue Worker
+Description=Billing System Queue Worker
+After=network.target mysql.service mariadb.service
 
 [Service]
+Type=simple
 User=www-data
 Group=www-data
+WorkingDirectory=/var/www/billing-system/billing-system
+ExecStart=/usr/bin/php /var/www/billing-system/billing-system/artisan queue:work --sleep=3 --tries=3 --queue=default,emails
 Restart=always
-ExecStart=/usr/bin/php /root/billinghub/billing-system/artisan queue:work
-StartLimitInterval=180
-StartLimitBurst=30
-RestartSec=5s
+RestartSec=5
 
 [Install]
 WantedBy=multi-user.target</code></pre></div>
 
             <h3>Enable and start services</h3>
-            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>sudo systemctl enable --now billinghub.service
-sudo systemctl enable --now redis-server</code></pre></div>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>systemctl daemon-reload
+systemctl enable --now billing-system.service</code></pre></div>
             <p>BillingHub is now installed. Continue to <strong>Webserver Setup</strong> to configure Nginx and SSL.</p>
 
             <!-- pager nav -->
@@ -296,25 +352,32 @@ sudo systemctl enable --now redis-server</code></pre></div>
             <h1>Webserver Setup</h1>
             <p>Configure Nginx to serve BillingHub on your domain.</p>
             <h2 id="nginx-config">Nginx Configuration</h2>
-            <p>Create a new site config at <code>/etc/nginx/sites-available/billinghub</code>:</p>
+            <p>Create a new site config at <code>/etc/nginx/sites-available/billing-system</code>:</p>
             <div class="code-block"><div class="code-block-header"><span class="code-lang">nginx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>server {
     listen 80;
     server_name your-domain.com;
-            root /root/billinghub/billing-system/public;
-    index index.php;
+    root /var/www/billing-system/billing-system/public;
+    index index.php index.html;
+
+    add_header X-Frame-Options "SAMEORIGIN";
+    add_header X-Content-Type-Options "nosniff";
 
     location / {
         try_files $uri $uri/ /index.php?$query_string;
     }
 
     location ~ \.php$ {
-        fastcgi_pass unix:/run/php/php8.2-fpm.sock;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        include fastcgi_params;
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+    }
+
+    location ~ /\.(?!well-known).* {
+        deny all;
     }
 }</code></pre></div>
             <h3>Enable the site</h3>
-            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>ln -s /etc/nginx/sites-available/billinghub /etc/nginx/sites-enabled/
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>ln -sf /etc/nginx/sites-available/billing-system /etc/nginx/sites-enabled/billing-system
+rm -f /etc/nginx/sites-enabled/default
 nginx -t
 systemctl reload nginx</code></pre></div>
             <div class="doc-pager">
@@ -338,13 +401,15 @@ certbot --nginx -d your-domain.com</code></pre></div>
         <div class="doc-content" id="page-updating">
             <h1>Updating BillingHub</h1>
             <p>Pull the latest release and run migrations to stay up to date.</p>
-            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>cd /var/www/billinghub/billing-system
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>cd /var/www/billing-system/billing-system
 git pull origin main
 composer install --no-dev --optimize-autoloader
 npm install && npm run build
 php artisan migrate --force
 php artisan queue:restart
-systemctl restart billinghub.service</code></pre></div>
+php artisan optimize
+php artisan view:cache
+systemctl restart billing-system.service</code></pre></div>
             <div class="doc-pager">
                 <div class="pager-card prev" onclick="showPage('ssl')"><span class="pager-arrow">←</span><div><div class="pager-label">Previous page</div><div class="pager-title">SSL Certificates</div></div></div>
                 <div class="pager-card next" onclick="showPage('environment')"><div><div class="pager-label">Next page</div><div class="pager-title">.env Setup</div></div><span class="pager-arrow">→</span></div>
@@ -491,6 +556,67 @@ PTERODACTYL_API_KEY=your-application-api-key</code></pre></div>
         <div class="doc-content" id="page-troubleshooting">
             <h1>Troubleshooting</h1>
             <p>Common fixes for installation and runtime issues.</p>
+
+            <h3>MySQL Access Denied Error</h3>
+            <div class="callout callout-warning"><span class="callout-icon">⚠️</span><div class="callout-body"><div class="callout-label">ERROR</div><p><code>SQLSTATE[HY000] [1698] Access denied for user 'root'@'localhost'</code></p></div></div>
+            <p><strong>Cause:</strong> Ubuntu MySQL uses auth_socket authentication by default.</p>
+            <p><strong>Solution:</strong> Use <code>sudo mysql</code> instead of password authentication, or set <code>DB_HOST=localhost</code> (not 127.0.0.1) in your .env file:</p>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code># Create database with sudo
+sudo mysql -e "CREATE DATABASE billing_db;"
+sudo mysql -e "CREATE USER 'billing_user'@'localhost' IDENTIFIED BY 'password';"
+sudo mysql -e "GRANT ALL PRIVILEGES ON billing_db.* TO 'billing_user'@'localhost';"</code></pre></div>
+
+            <h3>Node.js Version Too Old</h3>
+            <div class="callout callout-warning"><span class="callout-icon">⚠️</span><div class="callout-body"><div class="callout-label">ERROR</div><p><code>Vite requires Node.js version 20.19+ or 22.12+</code></p></div></div>
+            <p><strong>Solution:</strong> Install Node.js 20+ from NodeSource:</p>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code># Install Node.js 20
+curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+apt install -y nodejs
+
+# Verify version
+node -v  # Should show v20.x.x or higher</code></pre></div>
+
+            <h3>Permission Denied on Storage</h3>
+            <div class="callout callout-warning"><span class="callout-icon">⚠️</span><div class="callout-body"><div class="callout-label">ERROR</div><p><code>Unable to write to storage directory</code></p></div></div>
+            <p><strong>Solution:</strong> Set correct ownership and permissions:</p>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>cd /var/www/billing-system/billing-system
+chown -R www-data:www-data storage bootstrap/cache
+chmod -R 775 storage bootstrap/cache</code></pre></div>
+
+            <h3>Nginx 502 Bad Gateway</h3>
+            <p><strong>Cause:</strong> PHP-FPM is not running or wrong socket path.</p>
+            <p><strong>Solution:</strong></p>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code># Check PHP-FPM status
+systemctl status php8.2-fpm
+
+# Start if not running
+systemctl start php8.2-fpm
+systemctl enable php8.2-fpm
+
+# Check socket path exists
+ls -la /var/run/php/php8.2-fpm.sock</code></pre></div>
+
+            <h3>Database Migration Fails</h3>
+            <p>If migrations fail, reset and try again:</p>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code># Reset database
+sudo mysql -e "DROP DATABASE billing_db; CREATE DATABASE billing_db;"
+
+# Re-run migrations
+cd /var/www/billing-system/billing-system
+php artisan migrate:fresh --force
+php artisan db:seed --force</code></pre></div>
+
+            <h3>Reset Everything and Start Fresh</h3>
+            <p>To completely reset the installation:</p>
+            <div class="code-block"><div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code># Remove existing installation
+cd /var/www
+rm -rf billing-system
+
+# Re-clone and reinstall
+git clone https://github.com/Bebonaiem/billing-page.git billing-system
+cd billing-system/billing-system
+sudo bash scripts/install_ubuntu.sh</code></pre></div>
+
             <div class="doc-pager">
                 <div class="pager-card prev" onclick="showPage('queues')"><span class="pager-arrow">←</span><div><div class="pager-label">Previous</div><div class="pager-title">Queue Workers</div></div></div>
                 <div class="pager-card next" onclick="showPage('changelog')"><div><div class="pager-label">Next</div><div class="pager-title">Changelog</div></div><span class="pager-arrow">→</span></div>
