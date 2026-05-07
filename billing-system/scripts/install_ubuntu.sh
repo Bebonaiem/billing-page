@@ -98,7 +98,7 @@ APP_DEBUG=false
 APP_URL=http://localhost
 
 DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
+DB_HOST=localhost
 DB_PORT=3306
 DB_DATABASE=billing_system
 DB_USERNAME=billing_user
@@ -116,6 +116,7 @@ sed -i "s|^APP_ENV=.*$|APP_ENV=production|" .env
 sed -i "s|^APP_DEBUG=.*$|APP_DEBUG=false|" .env
 sed -i "s|^APP_URL=.*$|APP_URL=${APP_URL}|" .env
 sed -i "s|^DB_CONNECTION=.*$|DB_CONNECTION=mysql|" .env
+sed -i "s|^DB_HOST=.*$|DB_HOST=localhost|" .env
 sed -i "s|^DB_DATABASE=.*$|DB_DATABASE=${DB_NAME}|" .env
 sed -i "s|^DB_USERNAME=.*$|DB_USERNAME=${DB_USER}|" .env
 sed -i "s|^DB_PASSWORD=.*$|DB_PASSWORD=${DB_PASSWORD}|" .env
