@@ -3,7 +3,14 @@
 set -euo pipefail
 
 APP_NAME="Billing System"
-APP_DIR="/var/www/billing-system"
+
+# Detect if running from inside billing-system subdirectory
+if [[ "$(basename "$(pwd)")" == "billing-system" && -f "composer.json" ]]; then
+    APP_DIR="$(pwd)"
+else
+    APP_DIR="/var/www/billing-system"
+fi
+
 PHP_BIN="/usr/bin/php"
 COMPOSER_BIN="composer"
 NPM_BIN="npm"
