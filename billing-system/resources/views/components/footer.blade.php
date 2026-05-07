@@ -45,8 +45,14 @@
                 <ul class="space-y-2">
                     <li><a href="{{ route('home') }}" class="text-secondary hover:text-white transition-colors duration-200">Home</a></li>
                     <li><a href="{{ route('order') }}" class="text-secondary hover:text-white transition-colors duration-200">Services</a></li>
-                    <li><a href="{{ route('about') }}" class="text-secondary hover:text-white transition-colors duration-200">About Us</a></li>
-                    <li><a href="{{ route('contact') }}" class="text-secondary hover:text-white transition-colors duration-200">Contact</a></li>
+                    @auth
+                        <li><a href="{{ auth()->user()->is_admin ? route('admin.dashboard') : route('client.dashboard') }}" class="text-secondary hover:text-white transition-colors duration-200">Dashboard</a></li>
+                        <li><a href="{{ route('client.tickets') }}" class="text-secondary hover:text-white transition-colors duration-200">Support</a></li>
+                    @endauth
+                    @guest
+                        <li><a href="{{ route('login') }}" class="text-secondary hover:text-white transition-colors duration-200">Sign In</a></li>
+                        <li><a href="{{ route('register') }}" class="text-secondary hover:text-white transition-colors duration-200">Register</a></li>
+                    @endguest
                 </ul>
             </div>
 
@@ -54,10 +60,10 @@
             <div>
                 <h3 class="text-lg font-semibold text-white mb-4">Support</h3>
                 <ul class="space-y-2">
-                    <li><a href="{{ route('help') }}" class="text-secondary hover:text-white transition-colors duration-200">Help Center</a></li>
-                    <li><a href="{{ route('docs') }}" class="text-secondary hover:text-white transition-colors duration-200">Documentation</a></li>
-                    <li><a href="{{ route('api') }}" class="text-secondary hover:text-white transition-colors duration-200">API</a></li>
-                    <li><a href="{{ route('status') }}" class="text-secondary hover:text-white transition-colors duration-200">System Status</a></li>
+                    <li><a href="{{ route('client.tickets') }}" class="text-secondary hover:text-white transition-colors duration-200">Create Ticket</a></li>
+                    <li><a href="mailto:support@example.com" class="text-secondary hover:text-white transition-colors duration-200">Email Support</a></li>
+                    <li><a href="#" class="text-secondary hover:text-white transition-colors duration-200">FAQ</a></li>
+                    <li><a href="#" class="text-secondary hover:text-white transition-colors duration-200">Documentation</a></li>
                 </ul>
             </div>
 
@@ -65,10 +71,10 @@
             <div>
                 <h3 class="text-lg font-semibold text-white mb-4">Legal</h3>
                 <ul class="space-y-2">
-                    <li><a href="{{ route('privacy') }}" class="text-secondary hover:text-white transition-colors duration-200">Privacy Policy</a></li>
-                    <li><a href="{{ route('terms') }}" class="text-secondary hover:text-white transition-colors duration-200">Terms of Service</a></li>
-                    <li><a href="{{ route('cookies') }}" class="text-secondary hover:text-white transition-colors duration-200">Cookie Policy</a></li>
-                    <li><a href="{{ route('gdpr') }}" class="text-secondary hover:text-white transition-colors duration-200">GDPR</a></li>
+                    <li><a href="#" class="text-secondary hover:text-white transition-colors duration-200">Privacy Policy</a></li>
+                    <li><a href="#" class="text-secondary hover:text-white transition-colors duration-200">Terms of Service</a></li>
+                    <li><a href="#" class="text-secondary hover:text-white transition-colors duration-200">Cookie Policy</a></li>
+                    <li><a href="#" class="text-secondary hover:text-white transition-colors duration-200">GDPR</a></li>
                 </ul>
             </div>
         </div>
