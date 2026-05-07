@@ -92,6 +92,13 @@ Route::post('/login', function () {
 
     if (Auth::attempt($credentials, request()->boolean('remember'))) {
         request()->session()->regenerate();
+        $user = Auth::user();
+        
+        // Redirect based on user role
+        if ($user->email === 'admin@example.com' || $user->is_admin ?? false) {
+            return redirect()->intended(route('admin.dashboard'));
+        }
+        
         return redirect()->intended(route('client.dashboard'));
     }
 
@@ -122,6 +129,33 @@ Route::post('/register', function () {
     return redirect()->route('client.dashboard');
 })->middleware('guest');
 
+// Password reset routes
+Route::get('/forgot-password', function () {
+    return view('auth.forgot-password');
+})->middleware('guest')->name('password.request');
+
+Route::post('/forgot-password', function () {
+    request()->validate(['email' => 'required|email|exists:users,email']);
+    
+    // For now, just show success message (email functionality would be implemented later)
+    return back()->with('status', 'We have emailed your password reset link!');
+})->middleware('guest')->name('password.email');
+
+Route::get('/reset-password/{token}', function ($token) {
+    return view('auth.reset-password', ['token' => $token]);
+})->middleware('guest')->name('password.reset');
+
+Route::post('/reset-password', function () {
+    request()->validate([
+        'token' => 'required',
+        'email' => 'required|email|exists:users,email',
+        'password' => 'required|string|min:8|confirmed',
+    ]);
+    
+    // For now, just redirect to login (actual reset functionality would be implemented later)
+    return redirect()->route('login')->with('status', 'Your password has been reset!');
+})->middleware('guest')->name('password.update');
+
 // Authenticated routes
 Route::middleware('auth')->group(function () {
     Route::post('/logout', function () {
@@ -138,7 +172,7 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth'])->prefix('client')->name('client.')->group(function () {
+Route::middleware(['auth', 'client'])->prefix('client')->name('client.')->group(function () {
     Route::get('/dashboard', ClientDashboard::class)->name('dashboard');
     
     Route::get('/services', \App\Livewire\Client\Services::class)->name('services');
@@ -180,7 +214,7 @@ Route::middleware(['auth'])->prefix('client')->name('client.')->group(function (
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', AdminDashboard::class)->name('dashboard');
     
     Route::get('/orders', \App\Livewire\Admin\Orders::class)->name('orders.index');

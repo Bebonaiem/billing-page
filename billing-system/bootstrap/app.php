@@ -11,7 +11,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->web(append: [
+            \App\Http\Middleware\EnsureTempDir::class,
+        ]);
+        
+        // Register middleware aliases
+        $middleware->alias([
+            'admin' => \App\Http\Middleware\AdminMiddleware::class,
+            'client' => \App\Http\Middleware\ClientMiddleware::class,
+        ]);
     })
     ->withSchedule(function ($schedule) {
         // Daily at midnight - generate recurring invoices
