@@ -145,8 +145,8 @@ DB_NAME_SQL=$(sql_escape "$DB_NAME_SAFE")
 DB_USER_SQL=$(sql_escape "$DB_USER_SAFE")
 DB_PASSWORD_SQL=$(sql_escape "$DB_PASSWORD")
 
-# Use sudo mysql for root access (handles auth_socket plugin)
-sudo mysql <<SQL
+# Use mysql directly because the script already runs as root.
+mysql <<SQL
 CREATE DATABASE IF NOT EXISTS ${DB_NAME_SQL} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 CREATE USER IF NOT EXISTS '${DB_USER_SQL}'@'localhost' IDENTIFIED BY '${DB_PASSWORD_SQL}';
 GRANT ALL PRIVILEGES ON ${DB_NAME_SQL}.* TO '${DB_USER_SQL}'@'localhost';
@@ -164,8 +164,7 @@ fi
 composer install --no-dev --optimize-autoloader
 php artisan key:generate --force
 
-php artisan migrate --force
-php artisan db:seed --force
+php artisan migrate:fresh --seed --force
 php artisan storage:link || true
 
 ADMIN_EMAIL="$ADMIN_EMAIL" ADMIN_NAME="$ADMIN_NAME" ADMIN_FIRST_NAME="$ADMIN_FIRST_NAME" ADMIN_LAST_NAME="$ADMIN_LAST_NAME" ADMIN_PASSWORD="$ADMIN_PASSWORD" php artisan tinker --execute='
