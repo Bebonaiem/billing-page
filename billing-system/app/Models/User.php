@@ -235,31 +235,38 @@ class User extends Authenticatable
 
     public function addCredit(float $amount, string $description = ''): void
     {
-        $this->increment('credit_balance', $amount);
+        // Update credit balance through relationship
+        if ($this->credit) {
+            $this->credit->increment('balance', $amount);
+        } else {
+            $this->credit()->create(['balance' => $amount]);
+        }
         
         // Record credit transaction
         $this->creditTransactions()->create([
             'amount' => $amount,
             'type' => 'credit',
             'description' => $description,
-            'balance_after' => $this->credit_balance,
+            'balance_after' => $this->getCreditBalance(),
         ]);
     }
 
     public function deductCredit(float $amount, string $description = ''): bool
     {
-        if ($this->credit_balance < $amount) {
+        if ($this->getCreditBalance() < $amount) {
             return false;
         }
 
-        $this->decrement('credit_balance', $amount);
+        if ($this->credit) {
+            $this->credit->decrement('balance', $amount);
+        }
         
         // Record credit transaction
         $this->creditTransactions()->create([
             'amount' => -$amount,
             'type' => 'debit',
             'description' => $description,
-            'balance_after' => $this->credit_balance,
+            'balance_after' => $this->getCreditBalance(),
         ]);
 
         return true;
