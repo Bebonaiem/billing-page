@@ -10,6 +10,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Service;
 use App\Models\Invoice;
+use App\Models\InvoiceItem;
 use App\Models\Ticket;
 use App\Models\Currency;
 use App\Models\PaymentGateway;
@@ -305,14 +306,38 @@ class InitApp extends Command
             $status = $statuses[array_rand($statuses)];
             $dueDate = $status === 'overdue' ? now()->subDays(5) : now()->addDays(rand(5, 20));
             
-            Invoice::firstOrCreate(['service_id' => $service->id], [
+            // Create invoice
+            $invoice = Invoice::firstOrCreate([
                 'user_id' => $service->user_id,
                 'invoice_number' => 'INV-' . Str::random(8),
+            ], [
                 'status' => $status,
-                'total' => $service->product->price,
-                'currency' => 'USD',
+                'subtotal' => $service->price,
+                'discount' => 0,
+                'tax' => 0,
+                'credit' => 0,
+                'total' => $service->price,
+                'amount_paid' => $status === 'paid' ? $service->price : 0,
+                'balance' => $status === 'paid' ? 0 : $service->price,
+                'invoice_date' => now()->subDays(rand(1, 30)),
                 'due_date' => $dueDate,
                 'paid_date' => $status === 'paid' ? now()->subDays(rand(1, 10)) : null,
+                'created_at' => now()->subDays(rand(1, 30)),
+            ]);
+            
+            // Create invoice item
+            InvoiceItem::firstOrCreate([
+                'invoice_id' => $invoice->id,
+                'service_id' => $service->id,
+            ], [
+                'type' => 'service',
+                'description' => $service->product->name . ' - ' . $service->billing_cycle,
+                'quantity' => 1,
+                'unit_price' => $service->price,
+                'total' => $service->price,
+                'tax' => 0,
+                'period_start' => now()->subDays(rand(1, 30)),
+                'period_end' => now()->addDays(rand(25, 35)),
                 'created_at' => now()->subDays(rand(1, 30)),
             ]);
         }
