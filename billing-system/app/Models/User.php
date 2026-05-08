@@ -48,6 +48,13 @@ class User extends Authenticatable
         'timezone',
         'currency',
         'marketing_emails',
+        'is_admin',
+        'last_login_at',
+        'two_factor_secret',
+        'two_factor_enabled',
+        'credit_balance',
+        'stripe_customer_id',
+        'paypal_customer_id',
     ];
 
     /**
@@ -77,6 +84,8 @@ class User extends Authenticatable
             'two_factor_confirmed_at' => 'datetime',
             'last_login_at' => 'datetime',
             'marketing_emails' => 'boolean',
+            'is_admin' => 'boolean',
+            'two_factor_enabled' => 'boolean',
         ];
     }
 
