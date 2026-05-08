@@ -9,11 +9,8 @@
     <!-- Fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap">
 
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Custom CSS -->
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <!-- Vite Assets -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     
     <!-- Livewire Styles -->
     @livewireStyles
@@ -192,9 +189,6 @@
         });
     </script>
 
-    <!-- Custom JS -->
-    <script src="{{ asset('js/app.js') }}"></script>
-    
     <!-- Livewire Scripts -->
     @livewireScripts
 </body>
