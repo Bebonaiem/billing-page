@@ -1240,6 +1240,49 @@ select option {
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
 
+/* Dropdown fixes */
+.dropdown-menu {
+    background: rgba(13, 20, 36, 0.95) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+    border-radius: 0.75rem !important;
+    color: var(--text-primary) !important;
+}
+
+.dropdown-menu * {
+    color: inherit !important;
+}
+
+.dropdown-item {
+    color: var(--text-secondary) !important;
+    transition: all 0.2s ease !important;
+}
+
+.dropdown-item:hover {
+    background: rgba(255, 255, 255, 0.05) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Force dark theme for dropdowns */
+[data-theme="light"] .dropdown-menu {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="light"] .dropdown-item {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="light"] .dropdown-item:hover {
+    background: rgba(0, 0, 0, 0.05) !important;
+    color: var(--text-primary) !important;
+}
+
 /* ─── Responsive ────────────────────────────────────────────────── */
 @media (max-width: 768px) {
     .sidebar { display: none; }

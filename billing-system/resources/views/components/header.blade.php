@@ -51,7 +51,7 @@
                                  x-transition:leave-start="opacity-100 transform scale-100 translate-y-0"
                                  x-transition:leave-end="opacity-0 transform scale-95 translate-y-2"
                                  @click.away="notificationDropdownOpen = false" 
-                                 class="absolute right-0 mt-2 w-80 glass-effect-3d border border-custom rounded-xl shadow-glow py-2 animate-bounce-in" style="z-index: 9999;">
+                                 class="absolute right-0 mt-2 w-80 glass-effect-3d border border-custom rounded-xl shadow-glow py-2 animate-bounce-in dropdown-menu" style="z-index: 9999;">
                                 <div class="px-4 py-3 border-b border-custom/50">
                                     <h3 class="font-semibold text-white">Notifications</h3>
                                 </div>
@@ -81,7 +81,7 @@
                                  x-transition:leave-start="opacity-100 transform scale-100 translate-y-0"
                                  x-transition:leave-end="opacity-0 transform scale-95 translate-y-2"
                                  @click.away="userDropdownOpen = false" 
-                                 class="absolute right-0 mt-2 w-64 glass-effect-3d border border-custom rounded-xl shadow-glow py-2 animate-bounce-in" style="z-index: 9999;">
+                                 class="absolute right-0 mt-2 w-64 glass-effect-3d border border-custom rounded-xl shadow-glow py-2 animate-bounce-in dropdown-menu" style="z-index: 9999;">
                                 <!-- User Info Header -->
                                 <div class="px-4 py-3 border-b border-custom/50">
                                     <div class="flex items-center">
@@ -179,7 +179,7 @@
                                  x-transition:leave-start="opacity-100 transform scale-100 translate-y-0"
                                  x-transition:leave-end="opacity-0 transform scale-95 translate-y-2"
                                  @click.away="clientDropdownOpen = false" 
-                                 class="absolute right-0 mt-2 w-64 glass-effect-3d border border-custom rounded-xl shadow-glow py-2 animate-bounce-in" style="z-index: 9999;">
+                                 class="absolute right-0 mt-2 w-64 glass-effect-3d border border-custom rounded-xl shadow-glow py-2 animate-bounce-in dropdown-menu" style="z-index: 9999;">
                                 <a href="{{ route('client.profile') }}" class="block px-4 py-2 text-secondary hover:text-white hover:bg-card/50 transition-all duration-200">
                                     <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
