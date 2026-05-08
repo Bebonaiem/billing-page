@@ -16,6 +16,8 @@ use App\Models\Payment;
 use App\Models\Ticket;
 use App\Models\UserNote;
 use App\Models\CreditTransaction;
+use App\Models\UserCredit;
+use App\Models\LoginHistory;
 
 class User extends Authenticatable
 {
@@ -63,7 +65,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * Get attributes that should be cast.
      *
      * @return array<string, string>
      */
@@ -109,12 +111,22 @@ class User extends Authenticatable
         return $this->hasMany(CreditTransaction::class);
     }
 
-    // Helper methods for dashboard stats
-    public function getActiveServicesCount(): int
+    public function credit(): HasOne
     {
-        return $this->services()->where('status', 'active')->count();
+        return $this->hasOne(UserCredit::class);
     }
 
+    public function loginHistory(): HasMany
+    {
+        return $this->hasMany(LoginHistory::class);
+    }
+
+    public function notes(): HasMany
+    {
+        return $this->hasMany(UserNote::class);
+    }
+
+    
     public function getUnpaidInvoicesCount(): int
     {
         return $this->invoices()->where('status', 'unpaid')->count();
@@ -137,79 +149,7 @@ class User extends Authenticatable
 
     public function getCreditBalance(): float
     {
-        return $this->credit_balance ?? 0;
-    }
-
-    // Scopes
-    public function scopeActive($query)
-    {
-        return $query->where('status', 'active');
-    }
-
-    public function scopeSuspended($query)
-    {
-        return $query->where('status', 'suspended');
-    }
-
-    public function scopeAdmins($query)
-    {
-        return $query->where('is_admin', true);
-    }
-
-    // Attributes
-    public function getFullNameAttribute(): string
-    {
-        return trim(($this->first_name ?? '') . ' ' . ($this->last_name ?? '')) ?: $this->name;
-    }
-
-    public function getInitialsAttribute(): string
-    {
-        $name = $this->full_name;
-        $words = explode(' ', $name);
-        $initials = '';
-        
-        foreach ($words as $word) {
-            $initials .= strtoupper(substr($word, 0, 1));
-        }
-        
-        return substr($initials, 0, 2);
-    }
-
-    // Methods
-    public function isAdmin(): bool
-    {
-        return $this->is_admin ?? false;
-    }
-
-    // Helper methods for dashboard stats
-    public function getActiveServicesCount(): int
-    {
-        return $this->services()->where('status', 'active')->count();
-    }
-
-    public function getUnpaidInvoicesCount(): int
-    {
-        return $this->invoices()->where('status', 'unpaid')->count();
-    }
-
-    public function getOverdueInvoicesCount(): int
-    {
-        return $this->invoices()
-            ->where('status', 'unpaid')
-            ->whereDate('due_date', '<', now())
-            ->count();
-    }
-
-    public function getOpenTicketsCount(): int
-    {
-        return $this->tickets()
-            ->whereIn('status', ['open', 'answered', 'customer_reply'])
-            ->count();
-    }
-
-    public function getCreditBalance(): float
-    {
-        return $this->credit_balance ?? 0;
+        return $this->credit?->balance ?? 0;
     }
 
     // Scopes
@@ -273,6 +213,16 @@ class User extends Authenticatable
         return $this->status === 'banned';
     }
 
+    public function isStaff(): bool
+    {
+        return $this->hasAnyRole(['admin', 'staff', 'support']);
+    }
+
+    public function hasActiveServices(): bool
+    {
+        return $this->services()->where('status', 'active')->exists();
+    }
+
     public function updateLastLogin(): void
     {
         $this->update(['last_login_at' => now()]);
@@ -310,75 +260,9 @@ class User extends Authenticatable
         return true;
     }
 
-    public function credit(): HasOne
-    {
-        return $this->hasOne(UserCredit::class);
-    }
-
-    public function loginHistory(): HasMany
-    {
-        return $this->hasMany(LoginHistory::class);
-    }
-
-    public function notes(): HasMany
-    {
-        return $this->hasMany(UserNote::class);
-    }
-
-    // Helper methods
     public function getFullName(): string
     {
         return trim("{$this->first_name} {$this->last_name}") ?: $this->name;
-    }
-
-    public function isActive(): bool
-    {
-        return $this->status === 'active';
-    }
-
-    public function isSuspended(): bool
-    {
-        return $this->status === 'suspended';
-    }
-
-    public function isAdmin(): bool
-    {
-        return $this->hasRole('admin');
-    }
-
-    public function isStaff(): bool
-    {
-        return $this->hasAnyRole(['admin', 'staff', 'support']);
-    }
-
-    public function getCreditBalance(): float
-    {
-        return $this->credit?->balance ?? 0;
-    }
-
-    public function hasActiveServices(): bool
-    {
-        return $this->services()->where('status', 'active')->exists();
-    }
-
-    public function getActiveServicesCount(): int
-    {
-        return $this->services()->where('status', 'active')->count();
-    }
-
-    public function getUnpaidInvoicesCount(): int
-    {
-        return $this->invoices()->where('status', 'unpaid')->count();
-    }
-
-    public function getOverdueInvoicesCount(): int
-    {
-        return $this->invoices()->where('status', 'unpaid')->whereDate('due_date', '<', now())->count();
-    }
-
-    public function getOpenTicketsCount(): int
-    {
-        return $this->tickets()->whereIn('status', ['open', 'answered', 'customer_reply'])->count();
     }
 
     public function getFormattedAddress(): string
