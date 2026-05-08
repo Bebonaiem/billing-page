@@ -332,6 +332,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         return view('admin.test');
     })->name('test');
     
+    Route::get('/simple-dashboard', function () {
+        return view('admin.simple-dashboard');
+    })->name('simple-dashboard');
+    
     Route::get('/extensions', \App\Livewire\Admin\Extensions::class)->name('extensions.index');
 });
 
