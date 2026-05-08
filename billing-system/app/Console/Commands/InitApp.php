@@ -283,8 +283,12 @@ class InitApp extends Command
             Service::firstOrCreate(['order_id' => $order->id], [
                 'user_id' => $order->user_id,
                 'product_id' => $orderItem->product_id,
+                'order_item_id' => $orderItem->id,
                 'status' => $statuses[array_rand($statuses)],
-                'due_date' => now()->addDays(rand(10, 30)),
+                'price' => $orderItem->price,
+                'billing_cycle' => $orderItem->billing_cycle,
+                'next_invoice_date' => now()->addDays(rand(10, 30)),
+                'activated_at' => now()->subDays(rand(1, 30)),
                 'created_at' => $order->created_at,
             ]);
         }
