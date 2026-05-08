@@ -128,7 +128,7 @@
         }
     </style>
 </head>
-<body class="bg-background text-foreground antialiased">
+<body class="bg-background text-foreground antialiased flex flex-col min-h-screen">
     <!-- Particle Effects -->
     <div class="particle-container">
         <div class="particle"></div>
@@ -142,12 +142,12 @@
         <div class="particle"></div>
     </div>
     
-    <div id="app" class="min-h-screen particle-bg">
+    <div id="app" class="particle-bg flex-1 flex flex-col">
         <!-- Header Component -->
         @include('components.header')
 
         <!-- Page Content -->
-        <main>
+        <main class="flex-1">
             @yield('content')
         </main>
 
