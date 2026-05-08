@@ -277,7 +277,7 @@ class InitApp extends Command
 
         foreach ($orders as $order) {
             // Get the product from order items
-            $orderItem = $order->orderItems()->first();
+            $orderItem = $order->items()->first();
             if (!$orderItem) continue;
             
             Service::firstOrCreate(['order_id' => $order->id], [
