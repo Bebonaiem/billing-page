@@ -111,18 +111,21 @@ class InitApp extends Command
     {
         $this->line('Creating categories...');
         Category::firstOrCreate(['name' => 'Web Hosting'], [
+            'slug' => 'web-hosting',
             'description' => 'Shared and dedicated hosting solutions',
             'icon' => 'server',
             'sort_order' => 1,
         ]);
 
         Category::firstOrCreate(['name' => 'VPS Hosting'], [
+            'slug' => 'vps-hosting',
             'description' => 'Virtual Private Server hosting',
             'icon' => 'cloud',
             'sort_order' => 2,
         ]);
 
         Category::firstOrCreate(['name' => 'Domains'], [
+            'slug' => 'domains',
             'description' => 'Domain registration services',
             'icon' => 'globe',
             'sort_order' => 3,
@@ -140,6 +143,7 @@ class InitApp extends Command
         // Web Hosting Products
         Product::firstOrCreate(['name' => 'Starter Hosting'], [
             'category_id' => $webHosting->id,
+            'slug' => 'starter-hosting',
             'description' => 'Perfect for small websites and blogs',
             'price' => 9.99,
             'setup_fee' => 0,
@@ -150,6 +154,7 @@ class InitApp extends Command
 
         Product::firstOrCreate(['name' => 'Business Hosting'], [
             'category_id' => $webHosting->id,
+            'slug' => 'business-hosting',
             'description' => 'Ideal for growing businesses',
             'price' => 19.99,
             'setup_fee' => 0,
@@ -161,6 +166,7 @@ class InitApp extends Command
         // VPS Products
         Product::firstOrCreate(['name' => 'VPS Basic'], [
             'category_id' => $vpsHosting->id,
+            'slug' => 'vps-basic',
             'description' => 'Entry-level VPS with 2GB RAM',
             'price' => 29.99,
             'setup_fee' => 0,
@@ -172,6 +178,7 @@ class InitApp extends Command
         // Domain Products
         Product::firstOrCreate(['name' => '.com Domain'], [
             'category_id' => $domains->id,
+            'slug' => 'com-domain',
             'description' => 'Popular .com domain registration',
             'price' => 14.99,
             'setup_fee' => 0,
