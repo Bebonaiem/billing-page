@@ -117,22 +117,26 @@ class StripeGateway implements PaymentGatewayInterface
         throw new \Exception('Invalid webhook payload');
     }
 
-    public function verifyPayment(string $transactionId): bool
+    public function verifyPayment(string $transactionId): array
     {
         $settings = $this->config?->settings ?? [];
         $secretKey = $settings['secret_key'] ?? env('STRIPE_SECRET_KEY');
 
         if (empty($secretKey)) {
-            return false;
+            return ['success' => false, 'message' => 'Stripe secret key missing'];
         }
 
         try {
             $response = Http::withBasicAuth($secretKey, '')
                 ->get("https://api.stripe.com/v1/payment_intents/{$transactionId}");
 
-            return $response->successful() && $response->json('status') === 'succeeded';
+            if (!$response->successful()) {
+                return ['success' => false, 'message' => 'Failed to query Stripe'];
+            }
+
+            return ['success' => true, 'status' => $response->json('status')];
         } catch (\Exception $e) {
-            return false;
+            return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 
@@ -159,6 +163,17 @@ class StripeGateway implements PaymentGatewayInterface
         }
     }
 
+    public function refundPayment(string $transactionId, float $amount = 0): bool
+    {
+        $payment = Payment::where('transaction_id', $transactionId)->first();
+        if (!$payment) {
+            return false;
+        }
+
+        // reuse existing refund logic
+        return $this->refund($payment, $amount ?: $payment->amount);
+    }
+
     public function getName(): string
     {
         return 'Stripe';
@@ -174,26 +189,14 @@ class StripeGateway implements PaymentGatewayInterface
         return true;
     }
 
-    public function handleWebhook(string $payload, string $sigHeader): bool
+    public function handleWebhook(array $payload): bool
     {
-        $settings = $this->config?->settings ?? [];
-        $webhookSecret = $settings['webhook_secret'] ?? env('STRIPE_WEBHOOK_SECRET');
-
-        if (empty($webhookSecret)) {
-            return false;
-        }
-        
         try {
-            $event = json_decode($payload, true, 512, JSON_THROW_ON_ERROR);
-
-            if (!$this->verifyStripeSignature($payload, $sigHeader, $webhookSecret)) {
-                return false;
+            $type = $payload['type'] ?? null;
+            if (in_array($type, ['checkout.session.completed', 'payment_intent.succeeded'], true)) {
+                $this->processCallback($payload);
             }
 
-            if (in_array($event['type'] ?? '', ['checkout.session.completed', 'payment_intent.succeeded'], true)) {
-                $this->processCallback($event);
-            }
-            
             return true;
         } catch (\Exception $e) {
             return false;

@@ -17,12 +17,8 @@ class PayPalGateway implements PaymentGatewayInterface
     {
         $this->config = PaymentGateway::where('driver', 'paypal')->first();
         $this->sandbox = $this->config?->sandbox_mode ?? true;
-        $this->apiUrl = $this->sandbox
-            ? 'https://api-m.sandbox.paypal.com'
-            : 'https://api-m.paypal.com';
+        $this->apiUrl = $this->sandbox ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com';
     }
-
-}
 
     public function initializePayment(Invoice $invoice, array $paymentData = []): array
     {
@@ -31,62 +27,44 @@ class PayPalGateway implements PaymentGatewayInterface
         $clientSecret = $settings['client_secret'] ?? env('PAYPAL_CLIENT_SECRET');
 
         if (empty($clientId) || empty($clientSecret)) {
-            return [
-                'success' => false,
-                'error' => 'PayPal credentials are not configured.',
-            ];
+            return ['success' => false, 'error' => 'PayPal credentials not configured'];
         }
 
         try {
-            $response = Http::withBasicAuth($clientId, $clientSecret)
+            $tokenRes = Http::withBasicAuth($clientId, $clientSecret)
                 ->asForm()
-                ->post("{$this->apiUrl}/v1/oauth2/token", [
-                    'grant_type' => 'client_credentials',
-                ]);
+                ->post("{$this->apiUrl}/v1/oauth2/token", ['grant_type' => 'client_credentials']);
 
-            if (!$response->successful()) {
-                throw new \Exception($response->json('error_description') ?? 'Failed to get PayPal access token');
+            if (!$tokenRes->successful()) {
+                return ['success' => false, 'error' => 'Failed to authenticate with PayPal'];
             }
 
-            $accessToken = $response->json('access_token');
+            $accessToken = $tokenRes->json('access_token');
 
             $orderData = [
                 'intent' => 'CAPTURE',
-                'purchase_units' => [
-                    [
-                        'reference_id' => $invoice->invoice_number,
-                        'description' => "Invoice #{$invoice->invoice_number}",
-                        'amount' => [
-                            'currency_code' => strtoupper($invoice->user->currency ?? 'USD'),
-                            'value' => number_format($invoice->balance, 2, '.', ''),
-                        ],
-                        'custom_id' => $invoice->id,
+                'purchase_units' => [[
+                    'reference_id' => $invoice->invoice_number,
+                    'amount' => [
+                        'currency_code' => strtoupper($invoice->user->currency ?? 'USD'),
+                        'value' => number_format($invoice->balance, 2, '.', ''),
                     ],
-                ],
+                    'custom_id' => $invoice->id,
+                ]],
                 'application_context' => [
                     'return_url' => route('client.invoices') . '?payment=success',
                     'cancel_url' => route('client.invoices') . '?payment=cancelled',
                 ],
             ];
 
-            $response = Http::withToken($accessToken)
-                ->acceptJson()
-                ->post("{$this->apiUrl}/v2/checkout/orders", $orderData);
-
-            $orderResponse = $response->json();
-
-            if ($response->successful() && isset($orderResponse['id'])) {
-                $approvalLink = collect($orderResponse['links'] ?? [])
-                    ->firstWhere('rel', 'approve')['href'] ?? null;
-
-                return [
-                    'success' => true,
-                    'order_id' => $orderResponse['id'],
-                    'redirect_url' => $approvalLink,
-                ];
+            $res = Http::withToken($accessToken)->post("{$this->apiUrl}/v2/checkout/orders", $orderData);
+            if ($res->successful()) {
+                $order = $res->json();
+                $link = collect($order['links'] ?? [])->firstWhere('rel', 'approve')['href'] ?? null;
+                return ['success' => true, 'order_id' => $order['id'] ?? null, 'redirect_url' => $link];
             }
 
-            throw new \Exception('Failed to create PayPal order');
+            return ['success' => false, 'error' => 'Failed to create PayPal order'];
         } catch (\Exception $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -95,13 +73,10 @@ class PayPalGateway implements PaymentGatewayInterface
     public function handleWebhook(array $payload): bool
     {
         try {
-            $eventType = $payload['event_type'] ?? null;
-
-            if ($eventType === 'CHECKOUT.ORDER.COMPLETED') {
-                $orderId = $payload['resource']['id'] ?? null;
-                return !empty($orderId);
+            $type = $payload['event_type'] ?? $payload['type'] ?? null;
+            if ($type === 'CHECKOUT.ORDER.COMPLETED' || $type === 'checkout.session.completed') {
+                return true;
             }
-
             return false;
         } catch (\Exception $e) {
             return false;
@@ -110,35 +85,31 @@ class PayPalGateway implements PaymentGatewayInterface
 
     public function verifyPayment(string $transactionId): array
     {
-        $settings = $this->config?->settings ?? [];
-        $clientId = $settings['client_id'] ?? env('PAYPAL_CLIENT_ID');
-        $clientSecret = $settings['client_secret'] ?? env('PAYPAL_CLIENT_SECRET');
-
-        if (empty($clientId) || empty($clientSecret)) {
-            return ['success' => false, 'message' => 'PayPal not configured'];
-        }
-
         try {
-            $tokenResponse = Http::withBasicAuth($clientId, $clientSecret)
-                ->asForm()
-                ->post("{$this->apiUrl}/v1/oauth2/token", [
-                    'grant_type' => 'client_credentials',
-                ]);
+            $settings = $this->config?->settings ?? [];
+            $clientId = $settings['client_id'] ?? env('PAYPAL_CLIENT_ID');
+            $clientSecret = $settings['client_secret'] ?? env('PAYPAL_CLIENT_SECRET');
 
-            if (!$tokenResponse->successful()) {
-                return ['success' => false, 'message' => 'Failed to authenticate with PayPal'];
+            if (empty($clientId) || empty($clientSecret)) {
+                return ['success' => false, 'message' => 'PayPal not configured'];
             }
 
-            $accessToken = $tokenResponse->json('access_token');
-            $response = Http::withToken($accessToken)
-                ->acceptJson()
-                ->get("{$this->apiUrl}/v2/checkout/orders/{$transactionId}");
+            $tokenRes = Http::withBasicAuth($clientId, $clientSecret)
+                ->asForm()
+                ->post("{$this->apiUrl}/v1/oauth2/token", ['grant_type' => 'client_credentials']);
 
-            if ($response->successful() && ($response->json('status') === 'COMPLETED')) {
+            if (!$tokenRes->successful()) {
+                return ['success' => false, 'message' => 'Auth failed'];
+            }
+
+            $accessToken = $tokenRes->json('access_token');
+            $res = Http::withToken($accessToken)->get("{$this->apiUrl}/v2/checkout/orders/{$transactionId}");
+
+            if ($res->successful() && $res->json('status') === 'COMPLETED') {
                 return ['success' => true, 'status' => 'COMPLETED'];
             }
 
-            return ['success' => false, 'message' => 'Payment verification failed'];
+            return ['success' => false, 'message' => 'Not completed'];
         } catch (\Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
@@ -146,39 +117,30 @@ class PayPalGateway implements PaymentGatewayInterface
 
     public function refundPayment(string $transactionId, float $amount = 0): bool
     {
-        $settings = $this->config?->settings ?? [];
-        $clientId = $settings['client_id'] ?? env('PAYPAL_CLIENT_ID');
-        $clientSecret = $settings['client_secret'] ?? env('PAYPAL_CLIENT_SECRET');
-
-        if (empty($clientId) || empty($clientSecret)) {
-            return false;
-        }
-
         try {
-            $tokenResponse = Http::withBasicAuth($clientId, $clientSecret)
-                ->asForm()
-                ->post("{$this->apiUrl}/v1/oauth2/token", [
-                    'grant_type' => 'client_credentials',
-                ]);
+            $settings = $this->config?->settings ?? [];
+            $clientId = $settings['client_id'] ?? env('PAYPAL_CLIENT_ID');
+            $clientSecret = $settings['client_secret'] ?? env('PAYPAL_CLIENT_SECRET');
 
-            if (!$tokenResponse->successful()) {
+            if (empty($clientId) || empty($clientSecret)) {
                 return false;
             }
 
-            $accessToken = $tokenResponse->json('access_token');
+            $tokenRes = Http::withBasicAuth($clientId, $clientSecret)
+                ->asForm()
+                ->post("{$this->apiUrl}/v1/oauth2/token", ['grant_type' => 'client_credentials']);
 
-            $response = Http::withToken($accessToken)
-                ->acceptJson()
-                ->post("{$this->apiUrl}/v2/payments/captures/{$transactionId}/refund", [
-                    'amount' => [
-                        'value' => number_format($amount, 2, '.', ''),
-                        'currency_code' => 'USD',
-                    ],
-                ]);
+            if (!$tokenRes->successful()) {
+                return false;
+            }
 
-            return $response->successful();
+            $accessToken = $tokenRes->json('access_token');
+            $res = Http::withToken($accessToken)
+                ->post("{$this->apiUrl}/v2/payments/captures/{$transactionId}/refund", ['amount' => ['value' => number_format($amount, 2, '.', ''), 'currency_code' => 'USD']]);
+
+            return $res->successful();
         } catch (\Exception $e) {
             return false;
         }
     }
-
+}

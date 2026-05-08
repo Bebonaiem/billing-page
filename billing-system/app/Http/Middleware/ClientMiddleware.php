@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class ClientMiddleware
@@ -16,12 +17,13 @@ class ClientMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         // Check if user is authenticated
-        if (!auth()->check()) {
+        if (!Auth::check()) {
             return redirect()->route('login');
         }
 
         // Check if user is a regular client (not admin)
-        if (auth()->user()->is_admin) {
+        $user = Auth::user();
+        if ($user && $user->is_admin) {
             return redirect()->route('admin.dashboard');
         }
 
