@@ -7,11 +7,14 @@ use App\Models\OrderItem;
 use App\Models\Service;
 use App\Models\Invoice;
 use App\Models\Product;
+use App\Models\Coupon;
+use App\Models\User;
 use App\Services\Cart\CartService;
 use App\Services\Billing\InvoiceService;
 use App\Services\Pterodactyl\PterodactylService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Exception;
 
 class OrderService
 {
@@ -29,25 +32,40 @@ class OrderService
      */
     public function createFromCart(int $userId, ?string $couponCode = null): Order
     {
-        $cart = $this->cartService->getCart();
-        
-        if (empty($cart['items'])) {
-            throw new \Exception('Cart is empty');
-        }
+        try {
+            $cart = $this->cartService->getCart();
+            
+            if (empty($cart['items'])) {
+                throw new Exception('Cart is empty');
+            }
 
-        return DB::transaction(function () use ($userId, $cart, $couponCode) {
-            // Create order
-            $order = new Order([
-                'user_id' => $userId,
-                'status' => 'pending',
-                'total' => $cart['total'] ?? 0,
-                'discount' => $cart['discount'] ?? 0,
-                'coupon_code' => $couponCode,
-            ]);
-            $order->save();
+            // Validate user
+            $user = User::findOrFail($userId);
+            
+            // Validate coupon if provided
+            if ($couponCode) {
+                $this->validateCoupon($couponCode, $cart['total'], $userId);
+            }
 
-            // Create order items
-            foreach ($cart['items'] as $item) {
+            return DB::transaction(function () use ($user, $cart, $couponCode) {
+                // Generate unique order number
+                $orderNumber = $this->generateOrderNumber();
+                
+                // Create order
+                $order = new Order([
+                    'user_id' => $user->id,
+                    'order_number' => $orderNumber,
+                    'status' => 'pending',
+                    'subtotal' => $cart['subtotal'] ?? 0,
+                    'total' => $cart['total'] ?? 0,
+                    'discount' => $cart['discount'] ?? 0,
+                    'coupon_code' => $couponCode,
+                    'currency' => $user->currency ?? 'USD',
+                ]);
+                $order->save();
+
+                // Create order items
+                foreach ($cart['items'] as $item) {
                 $orderItem = new OrderItem([
                     'order_id' => $order->id,
                     'product_id' => $item['product_id'],

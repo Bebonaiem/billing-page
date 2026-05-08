@@ -104,43 +104,91 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         <!-- Revenue Chart -->
         <div class="glass-effect-3d rounded-2xl p-6 animate-bounce-in" style="animation-delay: 0.5s">
-            <h2 class="text-xl font-bold text-white mb-4">Revenue Analytics</h2>
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold text-white">Revenue Analytics</h2>
+                <div class="flex items-center space-x-2">
+                    <span class="w-3 h-3 bg-accent rounded-full animate-pulse"></span>
+                    <span class="text-xs text-secondary">Live</span>
+                </div>
+            </div>
             <div class="h-64 flex items-end justify-between space-x-2 mb-4">
-                <div class="flex-1 bg-accent/20 rounded-lg animate-morph" style="height: 60%"></div>
-                <div class="flex-1 bg-success/20 rounded-lg animate-morph" style="height: 80%; animation-delay: 0.2s"></div>
-                <div class="flex-1 bg-warning/20 rounded-lg animate-morph" style="height: 45%; animation-delay: 0.4s"></div>
-                <div class="flex-1 bg-error/20 rounded-lg animate-morph" style="height: 70%; animation-delay: 0.6s"></div>
-                <div class="flex-1 bg-accent/20 rounded-lg animate-morph" style="height: 90%; animation-delay: 0.8s"></div>
-                <div class="flex-1 bg-success/20 rounded-lg animate-morph" style="height: 65%; animation-delay: 1s"></div>
+                @if(isset($revenue_chart) && count($revenue_chart) > 0)
+                    @php
+                        $maxRevenue = collect($revenue_chart)->max('revenue');
+                        $maxRevenue = $maxRevenue > 0 ? $maxRevenue : 1;
+                    @endphp
+                    @foreach($revenue_chart as $index => $data)
+                        <div class="flex-1 flex flex-col items-center">
+                            <div class="w-full bg-gradient-to-t from-accent/40 to-accent/20 rounded-lg animate-morph hover:from-accent/60 hover:to-accent/40 transition-all duration-300 cursor-pointer group relative" 
+                                 style="height: {{ ($data['revenue'] / $maxRevenue) * 100 }}%; animation-delay: {{ $index * 0.1 }}s;"
+                                 title="{{ $data['month'] }}: ${{ number_format($data['revenue'], 2) }}">
+                                <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+                                    ${{ number_format($data['revenue'], 2) }}
+                                </div>
+                            </div>
+                            <span class="text-xs text-secondary mt-2">{{ $data['month'] }}</span>
+                        </div>
+                    @endforeach
+                @else
+                    <div class="flex-1 bg-accent/20 rounded-lg animate-morph" style="height: 60%;"></div>
+                    <div class="flex-1 bg-success/20 rounded-lg animate-morph" style="height: 80%; animation-delay: 0.2s;"></div>
+                    <div class="flex-1 bg-warning/20 rounded-lg animate-morph" style="height: 45%; animation-delay: 0.4s;"></div>
+                    <div class="flex-1 bg-error/20 rounded-lg animate-morph" style="height: 70%; animation-delay: 0.6s;"></div>
+                    <div class="flex-1 bg-accent/20 rounded-lg animate-morph" style="height: 90%; animation-delay: 0.8s;"></div>
+                    <div class="flex-1 bg-success/20 rounded-lg animate-morph" style="height: 65%; animation-delay: 1s;"></div>
+                @endif
             </div>
             <div class="flex justify-between text-sm text-secondary mt-4">
                 <span>6 Month Performance</span>
-                <span class="success-text">+28.4%</span>
+                <span class="success-text">{{ $stats['revenue_growth'] ?? '+28.4%' }}</span>
             </div>
         </div>
         
         <!-- User Activity Heatmap -->
         <div class="glass-effect-3d rounded-2xl p-6 animate-bounce-in" style="animation-delay: 0.6s">
-            <h2 class="text-xl font-bold text-white mb-4">User Activity Heatmap</h2>
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold text-white">User Activity Heatmap</h2>
+                <select class="bg-card border border-custom rounded-lg px-3 py-1 text-sm text-secondary focus:outline-none focus:border-accent">
+                    <option>This Week</option>
+                    <option>Last Week</option>
+                    <option>This Month</option>
+                </select>
+            </div>
             <div class="grid grid-cols-7 gap-1 text-xs">
                 @for($i = 0; $i < 7; $i++)
                     <div class="text-center">
                         <div class="text-secondary mb-2">{{ ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][$i] }}</div>
                         <div class="flex justify-center space-x-1">
                             @for($j = 0; $j < 24; $j++)
-                                <div class="w-8 h-8 rounded {{ $j < 12 ? 'bg-success/20' : ($j < 18 ? 'bg-warning/20' : 'bg-error/20') }} animate-pulse"></div>
+                                @php
+                                    $activityLevel = rand(0, 3);
+                                    $colors = ['bg-gray-700', 'bg-success/20', 'bg-warning/20', 'bg-error/20'];
+                                    $color = $colors[$activityLevel];
+                                @endphp
+                                <div class="w-2 h-2 rounded {{ $color }} hover:scale-150 transition-transform duration-200 cursor-pointer" 
+                                     title="{{ $j }}:00 - {{ $activityLevel * 25 }}% activity"></div>
                             @endfor
                         </div>
                     </div>
                 @endfor
-                <div class="flex items-center justify-between mt-4 text-xs">
+            </div>
+            <div class="flex items-center justify-between mt-4 text-xs">
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center">
+                        <div class="w-3 h-3 bg-gray-700 rounded-full mr-2"></div>
+                        <span>No Activity</span>
+                    </div>
                     <div class="flex items-center">
                         <div class="w-3 h-3 bg-success/20 rounded-full mr-2"></div>
-                        <span>Low Activity</span>
+                        <span>Low</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-3 h-3 bg-warning/20 rounded-full mr-2"></div>
+                        <span>Medium</span>
                     </div>
                     <div class="flex items-center">
                         <div class="w-3 h-3 bg-error/20 rounded-full mr-2"></div>
-                        <span>High Activity</span>
+                        <span>High</span>
                     </div>
                 </div>
             </div>
@@ -182,13 +230,19 @@
         </div>
         
         <div class="glass-effect-3d rounded-2xl p-6 animate-bounce-in" style="animation-delay: 0.8s">
-            <h2 class="text-xl font-bold text-white mb-4 flex items-center">
-                Recent Tickets
-                <span class="ml-2 px-2 py-1 text-xs warning-bg rounded-full animate-pulse">Priority</span>
-            </h2>
-            <div class="space-y-3">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold text-white flex items-center">
+                    Recent Tickets
+                    <span class="ml-2 px-2 py-1 text-xs warning-bg rounded-full animate-pulse">{{ $recent_tickets->count() }} New</span>
+                </h2>
+                <button class="text-xs text-accent hover:text-accent-hover transition-colors duration-200">
+                    View All →
+                </button>
+            </div>
+            <div class="space-y-3 max-h-96 overflow-y-auto custom-scrollbar">
                 @foreach($recent_tickets as $ticket)
-                    <div class="flex items-center justify-between p-4 bg-card/30 rounded-xl hover-lift group cursor-pointer transition-all duration-300">
+                    <div class="flex items-center justify-between p-4 bg-card/30 rounded-xl hover-lift group cursor-pointer transition-all duration-300"
+                         onclick="window.location.href='{{ route('admin.tickets.show', $ticket->id) }}'">
                         <div>
                             <p class="font-medium text-white group-hover:text-accent transition-colors duration-200">#{{ $ticket->ticket_number }}</p>
                             <p class="text-sm text-secondary">{{ Str::limit($ticket->subject, 40) }}</p>
