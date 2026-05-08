@@ -501,6 +501,7 @@ input[type="search"]:hover,
 textarea:hover,
 select:hover {
     border-color: var(--border-hover);
+    background: var(--bg-elevated);
 }
 
 input[type="text"]:focus,
@@ -515,6 +516,17 @@ select:focus {
     border-color: var(--border-focus);
     background: var(--bg-elevated);
     box-shadow: 0 0 0 3px var(--accent-dim);
+}
+
+/* Disable spinner arrows for number input */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
 }
 
 select {
