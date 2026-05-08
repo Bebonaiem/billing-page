@@ -136,7 +136,20 @@ class Checkout extends Component
             return;
         }
         /** @var User $user */
-        $user->update($this->billingInfo);
+        // Only update safe fields - prevent mass assignment vulnerabilities
+        $allowedFields = [
+            'first_name',
+            'last_name', 
+            'phone',
+            'company',
+            'address_line1',
+            'address_line2',
+            'city',
+            'state',
+            'postal_code',
+            'country'
+        ];
+        $user->update(collect($this->billingInfo)->only($allowedFields)->toArray());
         
         try {
             // Create order

@@ -48,8 +48,16 @@ class User extends Authenticatable
         'timezone',
         'currency',
         'marketing_emails',
-        'is_admin',
         'last_login_at',
+    ];
+
+    /**
+     * The attributes that should be guarded from mass assignment.
+     *
+     * @var list<string>
+     */
+    protected $guarded = [
+        'is_admin',
         'two_factor_secret',
         'two_factor_enabled',
         'credit_balance',

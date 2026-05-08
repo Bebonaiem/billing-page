@@ -83,33 +83,36 @@ Route::get('/checkout', \App\Livewire\Checkout\Checkout::class)->name('checkout'
 |--------------------------------------------------------------------------
 */
 
-// Guest routes
+// Authentication routes
 Route::get('/login', function () {
     return view('auth.login');
 })->middleware('guest')->name('login');
 
 Route::post('/login', function () {
     $credentials = request()->validate([
-        'email' => ['required', 'email'],
-        'password' => ['required'],
+        'email' => 'required|email',
+        'password' => 'required',
     ]);
 
-    if (Auth::attempt($credentials, request()->boolean('remember'))) {
+    if (Auth::attempt($credentials)) {
         request()->session()->regenerate();
-        $user = Auth::user();
+        
+        // Update last login
+        Auth::user()->update(['last_login_at' => now()]);
         
         // Redirect based on user role
+        $user = Auth::user();
         if ($user->is_admin) {
-            return redirect()->intended(route('admin.dashboard'));
+            return redirect()->route('admin.dashboard');
+        } else {
+            return redirect()->route('client.dashboard');
         }
-        
-        return redirect()->intended(route('client.dashboard'));
     }
 
     return back()->withErrors([
         'email' => 'The provided credentials do not match our records.',
-    ])->onlyInput('email');
-})->middleware('guest');
+    ]);
+})->middleware(['guest', 'throttle:5,1'])->name('login.submit');
 
 Route::get('/register', function () {
     return view('auth.register');
@@ -145,7 +148,7 @@ Route::post('/register', function () {
     Auth::login($user);
 
     return redirect()->route('client.dashboard')->with('success', 'Welcome! Your account has been created successfully.');
-})->middleware('guest');
+})->middleware(['guest', 'throttle:3,60']);
 
 // Password reset routes
 Route::get('/forgot-password', function () {
@@ -161,16 +164,15 @@ Route::post('/forgot-password', function () {
     $token = \Illuminate\Support\Str::random(60);
     \Illuminate\Support\Facades\DB::table('password_reset_tokens')->insert([
         'email' => $user->email,
-        'token' => $token,
+        'token' => \Illuminate\Support\Facades\Hash::make($token),
         'created_at' => now(),
     ]);
     
     // In a real application, you would send an email here
-    // For now, we'll just show the token in the session for testing
-    session(['reset_token' => $token, 'reset_email' => $user->email]);
+    // For now, we'll just show success message
     
     return back()->with('status', 'We have emailed your password reset link!');
-})->middleware('guest')->name('password.email');
+})->middleware(['guest', 'throttle:3,60'])->name('password.email');
 
 Route::get('/reset-password/{token}', function ($token) {
     $resetToken = \Illuminate\Support\Facades\DB::table('password_reset_tokens')
@@ -192,13 +194,21 @@ Route::post('/reset-password', function () {
         'password' => 'required|string|min:8|confirmed',
     ]);
     
-    $resetToken = \Illuminate\Support\Facades\DB::table('password_reset_tokens')
-        ->where('token', request()->token)
+    // Get all tokens for this email and check each one
+    $resetTokens = \Illuminate\Support\Facades\DB::table('password_reset_tokens')
         ->where('email', request()->email)
         ->where('created_at', '>', now()->subHours(24))
-        ->first();
+        ->get();
     
-    if (!$resetToken) {
+    $validToken = null;
+    foreach ($resetTokens as $tokenRecord) {
+        if (\Illuminate\Support\Facades\Hash::check(request()->token, $tokenRecord->token)) {
+            $validToken = $tokenRecord;
+            break;
+        }
+    }
+    
+    if (!$validToken) {
         return back()->with('error', 'Invalid or expired password reset token.');
     }
     
@@ -210,7 +220,7 @@ Route::post('/reset-password', function () {
     
     // Delete the reset token
     \Illuminate\Support\Facades\DB::table('password_reset_tokens')
-        ->where('token', request()->token)
+        ->where('token', $validToken->token)
         ->delete();
     
     return redirect()->route('login')->with('status', 'Your password has been reset successfully!');
@@ -345,19 +355,32 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 |--------------------------------------------------------------------------
 */
 
-Route::get('/payment/paypal/success', function () {
+Route::post('/payment/paypal/success', function () {
     $gateway = PaymentGateway::where('driver', 'paypal')->first();
 
     if (!$gateway) {
         return redirect()->route('client.dashboard')->with('error', 'PayPal gateway is not configured.');
     }
 
+    // Validate required fields
+    $validated = request()->validate([
+        'payment_id' => 'required|string',
+        'PayerID' => 'required|string',
+        'invoice_id' => 'required|integer|exists:invoices,id'
+    ]);
+
     try {
-        (new PayPalGateway())->processCallback(request()->all());
+        // Get invoice to verify amount
+        $invoice = \App\Models\Invoice::findOrFail($validated['invoice_id']);
+        
+        // Process payment with validation
+        $paypalGateway = new PayPalGateway();
+        $paypalGateway->processCallback($validated);
 
         return redirect()->route('client.invoices')->with('success', 'Payment completed successfully!');
     } catch (\Exception $e) {
-        return redirect()->route('client.invoices')->with('error', 'Payment capture failed: ' . $e->getMessage());
+        \Log::error('PayPal payment processing error: ' . $e->getMessage());
+        return redirect()->route('client.invoices')->with('error', 'Payment processing failed. Please contact support.');
     }
 })->name('payment.paypal.success');
 
