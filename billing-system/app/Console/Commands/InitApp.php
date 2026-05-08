@@ -182,7 +182,7 @@ class InitApp extends Command
             'description' => 'Popular .com domain registration',
             'price' => 14.99,
             'setup_fee' => 0,
-            'billing_cycle' => 'yearly',
+            'billing_cycle' => 'annually',
             'is_visible' => true,
             'sort_order' => 1,
         ]);
