@@ -108,17 +108,34 @@ class Dashboard extends Component
 
     private function calculateAverageResponseTime()
     {
-        $tickets = Ticket::whereNotNull('first_reply_at')
-            ->where('first_reply_at', '>=', now()->subDays(30))
-            ->get();
+        // Check if first_reply_at column exists, otherwise use updated_at as fallback
+        try {
+            $tickets = Ticket::whereNotNull('first_reply_at')
+                ->where('first_reply_at', '>=', now()->subDays(30))
+                ->get();
 
-        if ($tickets->isEmpty()) {
-            return '2hr 15min avg';
+            if ($tickets->isEmpty()) {
+                return '2hr 15min avg';
+            }
+
+            $totalMinutes = $tickets->sum(function ($ticket) {
+                return $ticket->created_at->diffInMinutes($ticket->first_reply_at);
+            });
+        } catch (\Exception $e) {
+            // Fallback: use updated_at if first_reply_at doesn't exist
+            $tickets = Ticket::whereNotNull('updated_at')
+                ->where('updated_at', '>=', now()->subDays(30))
+                ->where('updated_at', '!=', 'created_at')
+                ->get();
+
+            if ($tickets->isEmpty()) {
+                return '2hr 15min avg';
+            }
+
+            $totalMinutes = $tickets->sum(function ($ticket) {
+                return $ticket->created_at->diffInMinutes($ticket->updated_at);
+            });
         }
-
-        $totalMinutes = $tickets->sum(function ($ticket) {
-            return $ticket->created_at->diffInMinutes($ticket->first_reply_at);
-        });
 
         $averageMinutes = $totalMinutes / $tickets->count();
         $hours = floor($averageMinutes / 60);
