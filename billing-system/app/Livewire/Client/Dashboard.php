@@ -113,7 +113,7 @@ class Dashboard extends Component
             ->get()
             ->each(function ($ticket) use ($activities) {
                 $lastReply = $ticket->replies->first();
-                if ($lastReply && !$lastReply->is_admin) {
+                if ($lastReply && !$lastReply->is_staff_reply) {
                     $activities->push([
                         'type' => 'ticket',
                         'title' => 'Ticket #' . $ticket->id,

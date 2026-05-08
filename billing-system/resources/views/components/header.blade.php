@@ -51,7 +51,7 @@
                                  x-transition:leave-start="opacity-100 transform scale-100 translate-y-0"
                                  x-transition:leave-end="opacity-0 transform scale-95 translate-y-2"
                                  @click.away="open = false" 
-                                 class="absolute right-0 mt-2 w-64 glass-effect-3d border border-custom rounded-xl shadow-glow py-2 animate-bounce-in">
+                                 class="absolute right-0 mt-2 w-64 glass-effect-3d border border-custom rounded-xl shadow-glow py-2 animate-bounce-in z-50">
                                 <!-- User Info Header -->
                                 <div class="px-4 py-3 border-b border-custom/50">
                                     <div class="flex items-center">

@@ -147,6 +147,11 @@ class User extends Authenticatable
             ->count();
     }
 
+    public function getActiveServicesCount(): int
+    {
+        return $this->services()->where('status', 'active')->count();
+    }
+
     public function getCreditBalance(): float
     {
         return $this->credit?->balance ?? 0;
@@ -215,7 +220,7 @@ class User extends Authenticatable
 
     public function isStaff(): bool
     {
-        return $this->hasAnyRole(['admin', 'staff', 'support']);
+        return $this->isAdmin() || $this->status === 'staff' || $this->status === 'support';
     }
 
     public function hasActiveServices(): bool
