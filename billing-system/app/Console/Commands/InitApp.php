@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Service;
 use App\Models\Invoice;
 use App\Models\Ticket;
@@ -240,14 +241,27 @@ class InitApp extends Command
             foreach (range(1, 2) as $i) {
                 $product = $products->random();
                 
-                Order::firstOrCreate([
+                // Create order
+                $order = Order::firstOrCreate([
                     'user_id' => $user->id,
-                    'product_id' => $product->id,
-                    'status' => 'completed',
-                ], [
                     'order_number' => 'ORD-' . Str::random(8),
+                ], [
+                    'status' => 'active',
                     'total' => $product->price,
-                    'currency' => 'USD',
+                    'discount' => 0,
+                    'activated_at' => now()->subDays(rand(1, 30)),
+                    'created_at' => now()->subDays(rand(1, 30)),
+                ]);
+                
+                // Create order item
+                OrderItem::firstOrCreate([
+                    'order_id' => $order->id,
+                    'product_id' => $product->id,
+                ], [
+                    'product_name' => $product->name,
+                    'price' => $product->price,
+                    'setup_fee' => $product->setup_fee ?? 0,
+                    'billing_cycle' => $product->billing_cycle,
                     'created_at' => now()->subDays(rand(1, 30)),
                 ]);
             }
@@ -258,13 +272,17 @@ class InitApp extends Command
     {
         $this->line('Creating services...');
         
-        $orders = Order::where('status', 'completed')->get();
+        $orders = Order::where('status', 'active')->get();
         $statuses = ['active', 'suspended', 'active'];
 
         foreach ($orders as $order) {
+            // Get the product from order items
+            $orderItem = $order->orderItems()->first();
+            if (!$orderItem) continue;
+            
             Service::firstOrCreate(['order_id' => $order->id], [
                 'user_id' => $order->user_id,
-                'product_id' => $order->product_id,
+                'product_id' => $orderItem->product_id,
                 'status' => $statuses[array_rand($statuses)],
                 'due_date' => now()->addDays(rand(10, 30)),
                 'created_at' => $order->created_at,
