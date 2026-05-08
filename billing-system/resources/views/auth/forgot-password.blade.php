@@ -60,6 +60,14 @@
                                 </h3>
                                 <div class="mt-2 text-sm text-green-300">
                                     <p>{{ session('status') }}</p>
+                                    @if(session('reset_token'))
+                                        <div class="mt-3 p-3 bg-blue-500/20 border border-blue-500/50 rounded">
+                                            <p class="text-xs text-blue-300 mb-1">For testing purposes, your reset link is:</p>
+                                            <a href="{{ route('password.reset', session('reset_token')) }}" class="text-xs text-blue-400 hover:text-blue-300 underline">
+                                                {{ url('/reset-password/' . session('reset_token')) }}
+                                            </a>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>

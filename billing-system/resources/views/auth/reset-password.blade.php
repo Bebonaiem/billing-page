@@ -49,6 +49,13 @@
 
                 <div class="space-y-4">
                     <div>
+                        <label for="email" class="block text-sm font-medium text-secondary mb-2">Email address</label>
+                        <input id="email" name="email" type="email" value="{{ $email ?? old('email') }}" required
+                               class="w-full px-4 py-3 bg-card border border-custom rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                               placeholder="{{ $email ?? 'Enter your email' }}">
+                    </div>
+
+                    <div>
                         <label for="password" class="block text-sm font-medium text-secondary mb-2">New Password</label>
                         <input id="password" name="password" type="password" autocomplete="new-password" required
                                class="w-full px-4 py-3 bg-card border border-custom rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"

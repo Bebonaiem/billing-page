@@ -46,12 +46,36 @@
                 @endif
 
                 <div class="space-y-4">
+                    <!-- Name Fields -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="first_name" class="block text-sm font-medium text-secondary mb-2">First Name</label>
+                            <input id="first_name" name="first_name" type="text" autocomplete="given-name"
+                                   value="{{ old('first_name') }}"
+                                   class="w-full px-4 py-3 bg-card border border-custom rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                                   placeholder="First name">
+                            @error('first_name')
+                                <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
+                            <label for="last_name" class="block text-sm font-medium text-secondary mb-2">Last Name</label>
+                            <input id="last_name" name="last_name" type="text" autocomplete="family-name"
+                                   value="{{ old('last_name') }}"
+                                   class="w-full px-4 py-3 bg-card border border-custom rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                                   placeholder="Last name">
+                            @error('last_name')
+                                <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+
                     <div>
-                        <label for="name" class="block text-sm font-medium text-secondary mb-2">Full Name</label>
-                        <input id="name" name="name" type="text" autocomplete="name" required
+                        <label for="name" class="block text-sm font-medium text-secondary mb-2">Display Name</label>
+                        <input id="name" name="name" type="text" autocomplete="username" required
                                value="{{ old('name') }}"
                                class="w-full px-4 py-3 bg-card border border-custom rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                               placeholder="Enter your full name">
+                               placeholder="How you want to be addressed">
                         @error('name')
                             <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
                         @enderror
@@ -69,10 +93,32 @@
                     </div>
 
                     <div>
+                        <label for="phone" class="block text-sm font-medium text-secondary mb-2">Phone Number (Optional)</label>
+                        <input id="phone" name="phone" type="tel" autocomplete="tel"
+                               value="{{ old('phone') }}"
+                               class="w-full px-4 py-3 bg-card border border-custom rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                               placeholder="+1 (555) 123-4567">
+                        @error('phone')
+                            <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="company" class="block text-sm font-medium text-secondary mb-2">Company (Optional)</label>
+                        <input id="company" name="company" type="text" autocomplete="organization"
+                               value="{{ old('company') }}"
+                               class="w-full px-4 py-3 bg-card border border-custom rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                               placeholder="Your company name">
+                        @error('company')
+                            <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
                         <label for="password" class="block text-sm font-medium text-secondary mb-2">Password</label>
                         <input id="password" name="password" type="password" autocomplete="new-password" required
                                class="w-full px-4 py-3 bg-card border border-custom rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                               placeholder="Create a password">
+                               placeholder="Create a strong password (min 8 characters)">
                         @error('password')
                             <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
                         @enderror

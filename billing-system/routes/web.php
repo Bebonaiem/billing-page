@@ -114,19 +114,33 @@ Route::get('/register', function () {
 Route::post('/register', function () {
     $validated = request()->validate([
         'name' => ['required', 'string', 'max:255'],
+        'first_name' => ['nullable', 'string', 'max:255'],
+        'last_name' => ['nullable', 'string', 'max:255'],
         'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+        'phone' => ['nullable', 'string', 'max:20'],
+        'company' => ['nullable', 'string', 'max:255'],
         'password' => ['required', 'string', 'min:8', 'confirmed'],
     ]);
 
     $user = \App\Models\User::create([
         'name' => $validated['name'],
+        'first_name' => $validated['first_name'] ?? null,
+        'last_name' => $validated['last_name'] ?? null,
         'email' => $validated['email'],
+        'phone' => $validated['phone'] ?? null,
+        'company' => $validated['company'] ?? null,
         'password' => \Illuminate\Support\Facades\Hash::make($validated['password']),
+        'status' => 'active',
+        'language' => 'en',
+        'timezone' => 'UTC',
+        'currency' => 'USD',
+        'marketing_emails' => true,
+        'is_admin' => false,
     ]);
 
     Auth::login($user);
 
-    return redirect()->route('client.dashboard');
+    return redirect()->route('client.dashboard')->with('success', 'Welcome! Your account has been created successfully.');
 })->middleware('guest');
 
 // Password reset routes
@@ -137,12 +151,34 @@ Route::get('/forgot-password', function () {
 Route::post('/forgot-password', function () {
     request()->validate(['email' => 'required|email|exists:users,email']);
     
-    // For now, just show success message (email functionality would be implemented later)
+    $user = \App\Models\User::where('email', request()->email)->first();
+    
+    // Create password reset token
+    $token = \Illuminate\Support\Str::random(60);
+    \Illuminate\Support\Facades\DB::table('password_reset_tokens')->insert([
+        'email' => $user->email,
+        'token' => $token,
+        'created_at' => now(),
+    ]);
+    
+    // In a real application, you would send an email here
+    // For now, we'll just show the token in the session for testing
+    session(['reset_token' => $token, 'reset_email' => $user->email]);
+    
     return back()->with('status', 'We have emailed your password reset link!');
 })->middleware('guest')->name('password.email');
 
 Route::get('/reset-password/{token}', function ($token) {
-    return view('auth.reset-password', ['token' => $token]);
+    $resetToken = \Illuminate\Support\Facades\DB::table('password_reset_tokens')
+        ->where('token', $token)
+        ->where('created_at', '>', now()->subHours(24))
+        ->first();
+    
+    if (!$resetToken) {
+        return redirect()->route('password.request')->with('error', 'Invalid or expired password reset token.');
+    }
+    
+    return view('auth.reset-password', ['token' => $token, 'email' => $resetToken->email]);
 })->middleware('guest')->name('password.reset');
 
 Route::post('/reset-password', function () {
@@ -152,8 +188,28 @@ Route::post('/reset-password', function () {
         'password' => 'required|string|min:8|confirmed',
     ]);
     
-    // For now, just redirect to login (actual reset functionality would be implemented later)
-    return redirect()->route('login')->with('status', 'Your password has been reset!');
+    $resetToken = \Illuminate\Support\Facades\DB::table('password_reset_tokens')
+        ->where('token', request()->token)
+        ->where('email', request()->email)
+        ->where('created_at', '>', now()->subHours(24))
+        ->first();
+    
+    if (!$resetToken) {
+        return back()->with('error', 'Invalid or expired password reset token.');
+    }
+    
+    // Update user password
+    $user = \App\Models\User::where('email', request()->email)->first();
+    $user->update([
+        'password' => \Illuminate\Support\Facades\Hash::make(request()->password),
+    ]);
+    
+    // Delete the reset token
+    \Illuminate\Support\Facades\DB::table('password_reset_tokens')
+        ->where('token', request()->token)
+        ->delete();
+    
+    return redirect()->route('login')->with('status', 'Your password has been reset successfully!');
 })->middleware('guest')->name('password.update');
 
 // Authenticated routes
