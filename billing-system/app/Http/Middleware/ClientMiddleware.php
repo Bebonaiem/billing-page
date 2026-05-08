@@ -21,12 +21,8 @@ class ClientMiddleware
             return redirect()->route('login');
         }
 
-        // Check if user is a regular client (not admin)
-        $user = Auth::user();
-        if ($user && $user->is_admin) {
-            return redirect()->route('admin.dashboard');
-        }
-
+        // Allow both clients and admins to access client routes
+        // Admins can access client functionality as well
         return $next($request);
     }
 }
