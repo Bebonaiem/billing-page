@@ -69,7 +69,7 @@ class RegisterRequest extends FormRequest
             'first_name' => trim($this->input('first_name')),
             'last_name' => trim($this->input('last_name')),
             'email' => strtolower(trim($this->input('email'))),
-            'phone' => preg_replace('/[^\d\+\(\)]/', '', $this->input('phone')),
+            'phone' => $this->input('phone') ? preg_replace('/\D+/', '', $this->input('phone')) : null,
             'company' => trim($this->input('company')),
             'password' => $this->input('password'),
         ];

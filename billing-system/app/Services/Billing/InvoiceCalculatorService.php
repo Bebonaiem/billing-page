@@ -170,18 +170,22 @@ class InvoiceCalculatorService
      */
     private function isCouponValid(Coupon $coupon, Invoice $invoice): bool
     {
-        // Check if coupon is active
-        if (!$coupon->active) {
+        // Check if coupon is active and within date window
+        if (!$coupon->is_active) {
+            return false;
+        }
+
+        if ($coupon->starts_at && $coupon->starts_at > now()) {
             return false;
         }
 
         // Check expiry date
-        if ($coupon->expiry_date && $coupon->expiry_date < now()) {
+        if ($coupon->expires_at && $coupon->expires_at < now()) {
             return false;
         }
 
         // Check usage limits
-        if ($coupon->max_uses && $coupon->uses >= $coupon->max_uses) {
+        if ($coupon->max_uses && $coupon->uses_count >= $coupon->max_uses) {
             return false;
         }
 
@@ -197,7 +201,7 @@ class InvoiceCalculatorService
         }
 
         // Check minimum order amount
-        if ($coupon->minimum_amount && $invoice->subtotal < $coupon->minimum_amount) {
+        if ($coupon->min_order_amount && $invoice->subtotal < $coupon->min_order_amount) {
             return false;
         }
 
@@ -263,10 +267,6 @@ class InvoiceCalculatorService
         }
 
         // Validate currency
-        if ($invoice->user && $invoice->currency !== $invoice->user->currency) {
-            $errors[] = 'Invoice currency must match user currency';
-        }
-
         return $errors;
     }
 }

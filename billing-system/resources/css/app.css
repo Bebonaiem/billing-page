@@ -1,14 +1,14 @@
 @import 'tailwindcss';
 @import './components.css';
 
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=Geist:wght@300;400;500;600&display=swap');
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
 /* ─── Fonts ─────────────────────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=Geist:wght@300;400;500;600&display=swap');
-
 @theme {
     --font-sans: 'Geist', ui-sans-serif, system-ui, sans-serif;
     --font-mono: 'DM Mono', 'Fira Code', ui-monospace, monospace;

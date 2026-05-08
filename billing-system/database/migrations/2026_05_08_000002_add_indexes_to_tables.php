@@ -10,7 +10,6 @@ return new class extends Migration
     {
         // Add indexes to frequently queried columns
         Schema::table('users', function (Blueprint $table) {
-            $table->index(['email'], 'users_email_index');
             $table->index(['status'], 'users_status_index');
             $table->index(['is_admin'], 'users_is_admin_index');
             $table->index(['created_at'], 'users_created_at_index');
@@ -80,7 +79,6 @@ return new class extends Migration
     {
         // Drop indexes
         Schema::table('users', function (Blueprint $table) {
-            $table->dropIndex('users_email_index');
             $table->dropIndex('users_status_index');
             $table->dropIndex('users_is_admin_index');
             $table->dropIndex('users_created_at_index');

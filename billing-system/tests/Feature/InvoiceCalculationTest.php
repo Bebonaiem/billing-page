@@ -69,7 +69,7 @@ class InvoiceCalculationTest extends TestCase
             'code' => 'TEST10',
             'type' => 'percentage',
             'value' => 10,
-            'active' => true,
+            'is_active' => true,
         ]);
 
         $invoice = Invoice::factory()->create([
@@ -106,7 +106,7 @@ class InvoiceCalculationTest extends TestCase
             'code' => 'TEST20',
             'type' => 'fixed',
             'value' => 20,
-            'active' => true,
+            'is_active' => true,
         ]);
 
         $invoice = Invoice::factory()->create([
@@ -143,7 +143,7 @@ class InvoiceCalculationTest extends TestCase
             'code' => 'TEST150',
             'type' => 'fixed',
             'value' => 150, // More than the subtotal
-            'active' => true,
+            'is_active' => true,
         ]);
 
         $invoice = Invoice::factory()->create([
@@ -199,8 +199,8 @@ class InvoiceCalculationTest extends TestCase
         // Test expired coupon
         $expiredCoupon = Coupon::factory()->create([
             'code' => 'EXPIRED',
-            'active' => true,
-            'expiry_date' => now()->subDay(),
+            'is_active' => true,
+            'expires_at' => now()->subDay(),
         ]);
 
         $invoice = Invoice::factory()->create([

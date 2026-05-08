@@ -85,17 +85,6 @@ return new class extends Migration
             if (!Schema::hasColumn('users', 'paypal_customer_id')) {
                 $table->string('paypal_customer_id')->nullable()->after('stripe_customer_id');
             }
-            
-            // Indexes for performance - only add if they don't exist
-            if (!Schema::hasIndex('users', 'users_status_created_at_index')) {
-                $table->index(['status', 'created_at']);
-            }
-            if (!Schema::hasIndex('users', 'users_email_index')) {
-                $table->index('email');
-            }
-            if (!Schema::hasIndex('users', 'users_is_admin_index')) {
-                $table->index('is_admin');
-            }
         });
     }
 
@@ -129,10 +118,6 @@ return new class extends Migration
                 'stripe_customer_id',
                 'paypal_customer_id'
             ]);
-            
-            $table->dropIndex(['status', 'created_at']);
-            $table->dropIndex('email');
-            $table->dropIndex('is_admin');
         });
     }
 };

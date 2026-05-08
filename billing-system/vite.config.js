@@ -20,25 +20,10 @@ export default defineConfig({
     },
     build: {
         cssCodeSplit: true,
-        rollupOptions: {
-            output: {
-                manualChunks: {
-                    vendor: ['livewire', 'alpinejs'],
-                    styles: ['@tailwindcss/vite'],
-                },
-            },
-        },
         sourcemap: process.env.NODE_ENV === 'development',
-        minify: 'terser',
-        terserOptions: {
-            compress: {
-                drop_console: true,
-                drop_debugger: true,
-            },
+        minify: 'esbuild',
+        esbuild: {
+            drop: ['console', 'debugger'],
         },
-    },
-    define: {
-        __VUE_OPTIONS_API__: JSON.stringify(true),
-        __VUE_PROD_DEVTOOLS__: JSON.stringify(false),
     },
 });

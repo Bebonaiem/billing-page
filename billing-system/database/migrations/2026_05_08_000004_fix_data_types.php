@@ -14,8 +14,8 @@ return new class extends Migration
             $table->integer('credit_balance')->default(0)->change();
             
             // Add proper length constraints
-            $table->string('phone', 20)->change();
-            $table->string('company', 255)->change();
+            $table->string('phone', 20)->nullable()->change();
+            $table->string('company', 255)->nullable()->change();
             $table->string('currency', 3)->default('USD')->change();
             $table->string('language', 10)->default('en')->change();
             $table->string('timezone', 50)->default('UTC')->change();
@@ -85,7 +85,7 @@ return new class extends Migration
             $table->decimal('value', 15, 4)->default(0)->change();
             
             // Add proper string lengths
-            $table->string('code', 50)->unique()->change();
+            $table->string('code', 50)->change();
             $table->string('type', 20)->change();
         });
 
@@ -116,7 +116,7 @@ return new class extends Migration
         // Fix settings table data types
         Schema::table('settings', function (Blueprint $table) {
             // Add proper string lengths
-            $table->string('key', 100)->unique()->change();
+            $table->string('key', 100)->change();
             $table->text('value')->nullable()->change();
             $table->string('type', 20)->default('string')->change();
         });
@@ -176,7 +176,7 @@ return new class extends Migration
 
         Schema::table('coupons', function (Blueprint $table) {
             $table->decimal('value', 10, 2)->default(0)->change();
-            $table->string('code')->unique()->change();
+            $table->string('code')->change();
             $table->string('type')->change();
         });
 
@@ -197,7 +197,7 @@ return new class extends Migration
         });
 
         Schema::table('settings', function (Blueprint $table) {
-            $table->string('key')->unique()->change();
+            $table->string('key')->change();
             $table->text('value')->nullable()->change();
             $table->string('type')->default('string')->change();
         });

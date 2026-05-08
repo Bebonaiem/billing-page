@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,9 +13,12 @@ use App\Services\Order\OrderService;
 
 class Invoice extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'user_id',
         'order_id',
+        'coupon_id',
         'invoice_number',
         'status',
         'subtotal',
@@ -77,6 +81,11 @@ class Invoice extends Model
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
+    }
+
+    public function coupon(): BelongsTo
+    {
+        return $this->belongsTo(Coupon::class);
     }
 
     public function items(): HasMany
