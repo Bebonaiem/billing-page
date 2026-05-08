@@ -314,6 +314,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     
     Route::get('/tickets', \App\Livewire\Admin\Tickets::class)->name('tickets.index');
     
+    Route::get('/tickets/{ticket}', function ($ticket) {
+        return view('admin.tickets.show', ['ticket' => $ticket]);
+    })->name('tickets.show');
+    
     Route::get('/users', \App\Livewire\Admin\Users::class)->name('users.index');
     
     Route::get('/settings', \App\Livewire\Admin\Settings::class)->name('settings');
