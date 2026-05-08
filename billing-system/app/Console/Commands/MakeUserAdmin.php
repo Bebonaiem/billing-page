@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\User;
 use Illuminate\Console\Command;
 
 class MakeUserAdmin extends Command
@@ -11,20 +12,33 @@ class MakeUserAdmin extends Command
      *
      * @var string
      */
-    protected $signature = 'app:make-user-admin';
+    protected $signature = 'app:make-user-admin {email}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Make a user an admin by email';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        //
+        $email = $this->argument('email');
+        
+        $user = User::where('email', $email)->first();
+        
+        if (!$user) {
+            $this->error("User with email '{$email}' not found.");
+            return 1;
+        }
+        
+        $user->update(['is_admin' => true]);
+        
+        $this->info("User {$user->name} ({$user->email}) is now an admin!");
+        
+        return 0;
     }
 }
