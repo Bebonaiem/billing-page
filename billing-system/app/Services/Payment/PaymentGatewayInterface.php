@@ -15,7 +15,7 @@ interface PaymentGatewayInterface
      * Handle a webhook or callback payload.
      * Returns true if processed successfully.
      */
-    public function handleWebhook(array $payload): bool;
+    public function handleWebhook(mixed $payload): bool;
 
     /**
      * Verify a payment by transaction or order id. Returns an array with verification result.

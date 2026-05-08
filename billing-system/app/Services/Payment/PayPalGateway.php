@@ -70,10 +70,11 @@ class PayPalGateway implements PaymentGatewayInterface
         }
     }
 
-    public function handleWebhook(array $payload): bool
+    public function handleWebhook(mixed $payload): bool
     {
         try {
-            $type = $payload['event_type'] ?? $payload['type'] ?? null;
+            $data = is_string($payload) ? json_decode($payload, true) ?? [] : (array) $payload;
+            $type = $data['event_type'] ?? $data['type'] ?? null;
             if ($type === 'CHECKOUT.ORDER.COMPLETED' || $type === 'checkout.session.completed') {
                 return true;
             }
@@ -142,5 +143,72 @@ class PayPalGateway implements PaymentGatewayInterface
         } catch (\Exception $e) {
             return false;
         }
+    }
+
+    /**
+     * Process return/callback from PayPal after user completes payment.
+     * Expects an order id in request params (token, orderID, id).
+     */
+    public function processCallback(array $payload)
+    {
+        $orderId = $payload['token'] ?? $payload['orderID'] ?? $payload['id'] ?? $payload['order_id'] ?? null;
+        if (empty($orderId)) {
+            throw new \Exception('PayPal order id not provided');
+        }
+
+        $settings = $this->config?->settings ?? [];
+        $clientId = $settings['client_id'] ?? env('PAYPAL_CLIENT_ID');
+        $clientSecret = $settings['client_secret'] ?? env('PAYPAL_CLIENT_SECRET');
+
+        if (empty($clientId) || empty($clientSecret)) {
+            throw new \Exception('PayPal not configured');
+        }
+
+        $tokenRes = Http::withBasicAuth($clientId, $clientSecret)
+            ->asForm()
+            ->post("{$this->apiUrl}/v1/oauth2/token", ['grant_type' => 'client_credentials']);
+
+        if (!$tokenRes->successful()) {
+            throw new \Exception('Failed to authenticate with PayPal');
+        }
+
+        $accessToken = $tokenRes->json('access_token');
+        $res = Http::withToken($accessToken)->get("{$this->apiUrl}/v2/checkout/orders/{$orderId}");
+
+        if (!$res->successful()) {
+            throw new \Exception('Failed to fetch PayPal order');
+        }
+
+        $order = $res->json();
+        $status = $order['status'] ?? null;
+
+        if ($status !== 'COMPLETED') {
+            throw new \Exception('Payment not completed');
+        }
+
+        $purchaseUnit = $order['purchase_units'][0] ?? null;
+        $invoiceId = $purchaseUnit['custom_id'] ?? $purchaseUnit['reference_id'] ?? null;
+
+        if (empty($invoiceId)) {
+            throw new \Exception('Invoice id not found in PayPal order');
+        }
+
+        $invoice = \App\Models\Invoice::find($invoiceId);
+        if (!$invoice) {
+            throw new \Exception('Invoice not found');
+        }
+
+        $amount = (float) ($purchaseUnit['amount']['value'] ?? $invoice->balance);
+
+        return $invoice->addPayment(
+            $amount,
+            'paypal',
+            $orderId,
+            [
+                'gateway_id' => $this->config?->id,
+                'currency' => strtoupper($purchaseUnit['amount']['currency_code'] ?? $invoice->user->currency ?? 'USD'),
+                'gateway_response' => $order,
+            ]
+        );
     }
 }

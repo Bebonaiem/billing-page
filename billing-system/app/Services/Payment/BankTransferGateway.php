@@ -51,7 +51,7 @@ class BankTransferGateway implements PaymentGatewayInterface
         }
     }
 
-    public function handleWebhook(array $payload): bool
+    public function handleWebhook(mixed $payload): bool
     {
         // Bank transfers don't typically have webhooks - manual verification required
         return false;

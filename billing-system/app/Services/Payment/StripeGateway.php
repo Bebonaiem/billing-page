@@ -189,12 +189,22 @@ class StripeGateway implements PaymentGatewayInterface
         return true;
     }
 
-    public function handleWebhook(array $payload): bool
+    public function handleWebhook(mixed $payload, string $sigHeader = ''): bool
     {
         try {
-            $type = $payload['type'] ?? null;
+            $data = is_string($payload) ? json_decode($payload, true) ?? [] : (array) $payload;
+
+            // If signature header provided, verify signature when possible
+            if (!empty($sigHeader) && ($this->config?->settings['webhook_secret'] ?? env('STRIPE_WEBHOOK_SECRET'))) {
+                $secret = $this->config?->settings['webhook_secret'] ?? env('STRIPE_WEBHOOK_SECRET');
+                if (!$this->verifyStripeSignature(is_string($payload) ? $payload : json_encode($payload), $sigHeader, $secret)) {
+                    return false;
+                }
+            }
+
+            $type = $data['type'] ?? null;
             if (in_array($type, ['checkout.session.completed', 'payment_intent.succeeded'], true)) {
-                $this->processCallback($payload);
+                $this->processCallback($data);
             }
 
             return true;
