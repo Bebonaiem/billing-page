@@ -71,6 +71,10 @@ Route::post('/cart/add/{product}', function (Product $product, CartService $cart
     return redirect()->route('checkout')->with('success', "{$product->name} added to your cart.");
 })->name('cart.add');
 
+Route::get('/cart', function () {
+    return view('cart');
+})->name('cart');
+
 Route::get('/checkout', \App\Livewire\Checkout\Checkout::class)->name('checkout')->middleware('auth');
 
 /*
@@ -276,7 +280,8 @@ Route::middleware(['auth', 'client'])->prefix('client')->name('client.')->group(
         return redirect()->route('client.tickets')->with('success', 'Ticket created successfully!');
     })->name('tickets.store');
     
-    Route::get('/tickets/{ticket}', function ($ticket) {
+    Route::get('/tickets/{ticket}', function ($ticketId) {
+        $ticket = \App\Models\Ticket::where('user_id', Auth::id())->with(['replies'])->findOrFail($ticketId);
         return view('client.tickets.show', ['ticket' => $ticket]);
     })->name('tickets.show');
     
@@ -314,7 +319,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     
     Route::get('/tickets', \App\Livewire\Admin\Tickets::class)->name('tickets.index');
     
-    Route::get('/tickets/{ticket}', function ($ticket) {
+    Route::get('/tickets/{ticket}', function ($ticketId) {
+        $ticket = \App\Models\Ticket::with(['user', 'replies'])->findOrFail($ticketId);
         return view('admin.tickets.show', ['ticket' => $ticket]);
     })->name('tickets.show');
     
