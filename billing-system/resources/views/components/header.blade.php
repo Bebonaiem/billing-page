@@ -5,7 +5,8 @@
     $isAdmin = $isAuthenticated && $user->is_admin;
 @endphp
 
-<!-- Navigation -->
+<!-- Alpine.js Initialization -->
+<div x-data="{ mobileMenuOpen: false }">
 @if($isAuthenticated)
     @if($isAdmin)
         {{-- Admin Navigation --}}
@@ -26,31 +27,60 @@
                     <div class="flex items-center space-x-6">
                         <!-- Theme Toggle -->
                         <button onclick="toggleTheme()" class="p-2 text-secondary hover:text-white rounded-lg transition-all duration-200">
-                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="h-5 w-5 theme-icon-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0018 9a9.003 9.003 0 01-4.646 4.646z"></path>
+                            </svg>
+                            <svg class="h-5 w-5 theme-icon-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
                             </svg>
                         </button>
                         <!-- Notifications -->
-                        <button class="relative p-2.5 text-secondary hover:text-white rounded-xl transition-all duration-200">
-                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-                            </svg>
-                            <span class="notification-badge">3</span>
-                        </button>
-                        <!-- User dropdown -->
-                        <div class="relative" x-data="{ open: false }">
-                            <button @click="open = !open" class="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent border-2 border-custom p-0.5 hover-lift">
-                                <img class="avatar-sm rounded-full" src="https://ui-avatars.com/api/?name={{ $user->name }}&color=6366f1&background=1e1b4b&bold=true&size=40" alt="{{ $user->name }}">
-                                <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full" style="background: var(--success); border-color: var(--bg-secondary);"></div>
+                        <div class="relative" x-data="{ notificationDropdownOpen: false }">
+                            <button @click="notificationDropdownOpen = !notificationDropdownOpen" class="relative p-2.5 text-secondary hover:text-white rounded-xl transition-all duration-200">
+                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                                </svg>
+                                <span class="notification-badge">3</span>
                             </button>
-                            <div x-show="open" 
+                            <!-- Notification Dropdown -->
+                            <div x-show="notificationDropdownOpen" 
                                  x-transition:enter="transition ease-out duration-300"
                                  x-transition:enter-start="opacity-0 transform scale-95 translate-y-2"
                                  x-transition:enter-end="opacity-100 transform scale-100 translate-y-0"
                                  x-transition:leave="transition ease-in duration-200"
                                  x-transition:leave-start="opacity-100 transform scale-100 translate-y-0"
                                  x-transition:leave-end="opacity-0 transform scale-95 translate-y-2"
-                                 @click.away="open = false" 
+                                 @click.away="notificationDropdownOpen = false" 
+                                 class="absolute right-0 mt-2 w-80 glass-effect-3d border border-custom rounded-xl shadow-glow py-2 animate-bounce-in z-50">
+                                <div class="px-4 py-3 border-b border-custom/50">
+                                    <h3 class="font-semibold text-white">Notifications</h3>
+                                </div>
+                                <div class="max-h-96 overflow-y-auto">
+                                    <div class="px-4 py-3 hover:bg-card/50 transition-colors duration-200">
+                                        <p class="text-sm text-white">New invoice #12345 is ready</p>
+                                        <p class="text-xs text-muted">2 minutes ago</p>
+                                    </div>
+                                    <div class="px-4 py-3 hover:bg-card/50 transition-colors duration-200">
+                                        <p class="text-sm text-white">Service #6789 has been activated</p>
+                                        <p class="text-xs text-muted">1 hour ago</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- User dropdown -->
+                        <div class="relative" x-data="{ userDropdownOpen: false }">
+                            <button @click="userDropdownOpen = !userDropdownOpen" class="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent border-2 border-custom p-0.5 hover-lift">
+                                <img class="avatar-sm rounded-full" src="https://ui-avatars.com/api/?name={{ $user->name }}&color=6366f1&background=1e1b4b&bold=true&size=40" alt="{{ $user->name }}">
+                                <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full" style="background: var(--success); border-color: var(--bg-secondary);"></div>
+                            </button>
+                            <div x-show="userDropdownOpen" 
+                                 x-transition:enter="transition ease-out duration-300"
+                                 x-transition:enter-start="opacity-0 transform scale-95 translate-y-2"
+                                 x-transition:enter-end="opacity-100 transform scale-100 translate-y-0"
+                                 x-transition:leave="transition ease-in duration-200"
+                                 x-transition:leave-start="opacity-100 transform scale-100 translate-y-0"
+                                 x-transition:leave-end="opacity-0 transform scale-95 translate-y-2"
+                                 @click.away="userDropdownOpen = false" 
                                  class="absolute right-0 mt-2 w-64 glass-effect-3d border border-custom rounded-xl shadow-glow py-2 animate-bounce-in z-50">
                                 <!-- User Info Header -->
                                 <div class="px-4 py-3 border-b border-custom/50">
@@ -122,12 +152,15 @@
                         <a href="{{ route('client.tickets') }}" class="text-secondary hover:text-white transition-colors duration-200">Support</a>
                         <!-- Theme Toggle -->
                         <button onclick="toggleTheme()" class="p-2 text-secondary hover:text-white rounded-lg transition-all duration-200">
-                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="h-5 w-5 theme-icon-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0018 9a9.003 9.003 0 01-4.646 4.646z"></path>
                             </svg>
+                            <svg class="h-5 w-5 theme-icon-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                            </svg>
                         </button>
-                        <div class="relative" x-data="{ open: false }">
-                            <button @click="open = !open" class="flex items-center text-secondary hover:text-white transition-colors duration-200">
+                        <div class="relative" x-data="{ clientDropdownOpen: false }">
+                            <button @click="clientDropdownOpen = !clientDropdownOpen" class="flex items-center text-secondary hover:text-white transition-colors duration-200">
                                 <div class="w-8 h-8 accent-bg rounded-full flex items-center justify-center mr-2">
                                     <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
@@ -138,15 +171,15 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7"/>
                                 </svg>
                             </button>
-                            <div x-show="open" 
+                            <div x-show="clientDropdownOpen" 
                                  x-transition:enter="transition ease-out duration-300"
                                  x-transition:enter-start="opacity-0 transform scale-95 translate-y-2"
                                  x-transition:enter-end="opacity-100 transform scale-100 translate-y-0"
                                  x-transition:leave="transition ease-in duration-200"
                                  x-transition:leave-start="opacity-100 transform scale-100 translate-y-0"
                                  x-transition:leave-end="opacity-0 transform scale-95 translate-y-2"
-                                 @click.away="open = false" 
-                                 class="absolute right-0 mt-2 w-64 glass-effect-3d border border-custom rounded-xl shadow-glow py-2 animate-bounce-in">
+                                 @click.away="clientDropdownOpen = false" 
+                                 class="absolute right-0 mt-2 w-64 glass-effect-3d border border-custom rounded-xl shadow-glow py-2 animate-bounce-in z-50">
                                 <a href="{{ route('client.profile') }}" class="block px-4 py-2 text-secondary hover:text-white hover:bg-card/50 transition-all duration-200">
                                     <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
@@ -215,3 +248,4 @@
         </div>
     </nav>
 @endif
+</div>
