@@ -20,7 +20,7 @@
         @include('components.header')
 
         <!-- Main Content -->
-        <main class="min-h-screen bg-gradient-to-br from-blue-900/20 to-purple-900/20">
+        <main class="min-h-screen bg-gradient-to-br from-blue-900/20 to-purple-900/20 pt-16">
             @yield('content')
         </main>
 

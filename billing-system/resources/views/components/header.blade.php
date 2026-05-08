@@ -9,7 +9,7 @@
 <div x-data="{ mobileMenuOpen: false }" style="position: relative; z-index: 100;">
 @if($isAuthenticated)
     {{-- Admins use client navigation with Admin Panel option --}}
-    <nav class="glass-effect border-b border-custom sticky top-0 z-40">
+    <nav class="glass-effect border-b border-custom fixed top-0 left-0 right-0 z-50 backdrop-blur-lg bg-opacity-90">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
@@ -143,7 +143,7 @@
         </nav>
     @else
         {{-- Client Navigation --}}
-        <nav class="glass-effect border-b border-custom sticky top-0 z-40">
+        <nav class="glass-effect border-b border-custom fixed top-0 left-0 right-0 z-50 backdrop-blur-lg bg-opacity-90">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex items-center">
