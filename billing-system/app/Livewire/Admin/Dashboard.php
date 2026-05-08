@@ -13,96 +13,21 @@ class Dashboard extends Component
 {
     public function render()
     {
-        // Calculate current period stats
-        $currentMonth = now()->month;
-        $currentYear = now()->year;
-        $lastMonth = now()->subMonth()->month;
-        $lastYear = now()->subMonth()->year;
-
-        // Revenue calculations
-        $totalRevenue = Invoice::where('status', 'paid')->sum('total');
-        $monthlyRevenue = Invoice::where('status', 'paid')
-            ->whereMonth('paid_date', $currentMonth)
-            ->whereYear('paid_date', $currentYear)
-            ->sum('total');
-        $lastMonthRevenue = Invoice::where('status', 'paid')
-            ->whereMonth('paid_date', $lastMonth)
-            ->whereYear('paid_date', $lastYear)
-            ->sum('total');
-
-        // Service calculations
-        $activeServices = Service::where('status', 'active')->count();
-        $lastMonthServices = Service::where('status', 'active')
-            ->whereMonth('created_at', $lastMonth)
-            ->whereYear('created_at', $lastYear)
-            ->count();
-
-        // Order calculations
-        $pendingOrders = Order::where('status', 'pending')->count();
-        $lastWeekOrders = Order::where('created_at', '>=', now()->subWeek())->count();
-        $twoWeeksOrders = Order::where('created_at', '>=', now()->subWeeks(2))
-            ->where('created_at', '<', now()->subWeek())
-            ->count();
-
-        // Invoice calculations
-        $overdueInvoices = Invoice::where('status', 'unpaid')
-            ->whereDate('due_date', '<', now())
-            ->count();
-        $lastMonthOverdue = Invoice::where('status', 'unpaid')
-            ->whereDate('due_date', '<', now()->subMonth())
-            ->count();
-
-        // Ticket calculations
-        $openTickets = Ticket::whereIn('status', ['open', 'answered', 'customer_reply'])->count();
-        $avgResponseTime = $this->calculateAverageResponseTime();
-
-        // User calculations
-        $newUsers = User::whereMonth('created_at', $currentMonth)->count();
-        $lastMonthUsers = User::whereMonth('created_at', $lastMonth)->count();
-
+        // Simple stats calculation
         $stats = [
-            'total_revenue' => $totalRevenue,
-            'monthly_revenue' => $monthlyRevenue,
-            'revenue_growth' => $lastMonthRevenue > 0 ? 
-                '+' . round((($monthlyRevenue - $lastMonthRevenue) / $lastMonthRevenue) * 100, 1) . '%' : 
-                '+0%',
-            'active_services' => $activeServices,
-            'service_growth' => $lastMonthServices > 0 ? 
-                '+' . round((($activeServices - $lastMonthServices) / $lastMonthServices) * 100, 1) . '%' : 
-                '+12.3%',
-            'pending_orders' => $pendingOrders,
-            'order_trend' => $twoWeeksOrders > 0 ? 
-                '+' . round((($lastWeekOrders - $twoWeeksOrders) / $twoWeeksOrders) * 100, 1) . '%' : 
-                '+8.7%',
-            'overdue_invoices' => $overdueInvoices,
-            'invoice_trend' => $lastMonthOverdue > 0 ? 
-                '-' . round((($overdueInvoices - $lastMonthOverdue) / $lastMonthOverdue) * 100, 1) . '%' : 
-                '-2.4%',
-            'open_tickets' => $openTickets,
-            'ticket_response' => $avgResponseTime,
-            'new_users' => $newUsers,
-            'user_growth' => $lastMonthUsers > 0 ? 
-                '+' . round((($newUsers - $lastMonthUsers) / $lastMonthUsers) * 100, 1) . '%' : 
-                '+5.2%',
+            'total_revenue' => Invoice::where('status', 'paid')->sum('total'),
+            'active_services' => Service::where('status', 'active')->count(),
+            'pending_orders' => Order::where('status', 'pending')->count(),
+            'open_tickets' => Ticket::whereIn('status', ['open', 'answered', 'customer_reply'])->count(),
         ];
 
         $recent_orders = Order::with('user')->latest()->take(5)->get();
         $recent_tickets = Ticket::with('user')->latest()->take(5)->get();
-        $overdue_invoices = Invoice::with('user')
-            ->where('status', 'unpaid')
-            ->whereDate('due_date', '<', now())
-            ->take(5)
-            ->get();
-
-        // Chart data for revenue analytics
-        $revenueChart = $this->getRevenueChartData();
 
         return view('livewire.admin.dashboard', [
             'stats' => $stats,
             'recent_orders' => $recent_orders,
             'recent_tickets' => $recent_tickets,
-            'overdue_invoices' => $overdue_invoices,
-            'revenue_chart' => $revenueChart,
         ]);
     }
 
