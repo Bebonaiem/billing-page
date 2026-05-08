@@ -87,4 +87,12 @@ class Setting extends Model
             })
             ->toArray();
     }
+
+    /**
+     * Legacy method for backward compatibility
+     */
+    public static function getValue(string $key, $default = null)
+    {
+        return self::get($key, $default);
+    }
 }

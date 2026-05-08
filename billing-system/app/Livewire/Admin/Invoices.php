@@ -73,12 +73,13 @@ class Invoices extends Component
     public function render()
     {
         $query = Invoice::query()
-            ->with(['user'])
+            ->with(['user:id,name,email,first_name,last_name'])
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('invoice_number', 'like', "%{$this->search}%")
                         ->orWhereHas('user', function ($userQuery) {
-                            $userQuery->where('email', 'like', "%{$this->search}%");
+                            $userQuery->where('email', 'like', "%{$this->search}%")
+                                     ->orWhere('name', 'like', "%{$this->search}%");
                         });
                     });
             })
@@ -90,7 +91,12 @@ class Invoices extends Component
             });
 
         $invoices = $query->latest()->paginate(15);
-        $users = User::orderBy('name')->get();
+        
+        // Cache the users list to avoid repeated queries
+        $users = User::select('id', 'name', 'email', 'first_name', 'last_name')
+                    ->orderBy('name')
+                    ->remember(now()->addHours(1))
+                    ->get();
 
         return view('livewire.admin.invoices', [
             'invoices' => $invoices,

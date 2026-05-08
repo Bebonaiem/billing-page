@@ -11,6 +11,9 @@ use App\Services\Cart\CartService;
 use App\Services\Billing\InvoiceService;
 use App\Services\Payment\PayPalGateway;
 use App\Services\Payment\StripeGateway;
+use App\Http\Controllers\Auth\PasswordResetController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -84,156 +87,42 @@ Route::get('/checkout', \App\Livewire\Checkout\Checkout::class)->name('checkout'
 */
 
 // Authentication routes
-Route::get('/login', function () {
-    return view('auth.login');
-})->middleware('guest')->name('login');
+Route::get('/login', [AuthenticatedSessionController::class, 'create'])
+    ->middleware('guest')
+    ->name('login');
 
-Route::post('/login', function () {
-    $credentials = request()->validate([
-        'email' => 'required|email',
-        'password' => 'required',
-    ]);
+Route::post('/login', [AuthenticatedSessionController::class, 'store'])
+    ->middleware(['guest', 'throttle:5,1'])
+    ->name('login.submit');
 
-    if (Auth::attempt($credentials)) {
-        request()->session()->regenerate();
-        
-        // Update last login
-        Auth::user()->update(['last_login_at' => now()]);
-        
-        // Redirect based on user role
-        $user = Auth::user();
-        if ($user->is_admin) {
-            return redirect()->route('admin.dashboard');
-        } else {
-            return redirect()->route('client.dashboard');
-        }
-    }
+Route::get('/register', [RegisteredUserController::class, 'create'])
+    ->middleware('guest')
+    ->name('register');
 
-    return back()->withErrors([
-        'email' => 'The provided credentials do not match our records.',
-    ]);
-})->middleware(['guest', 'throttle:5,1'])->name('login.submit');
-
-Route::get('/register', function () {
-    return view('auth.register');
-})->middleware('guest')->name('register');
-
-Route::post('/register', function () {
-    $validated = request()->validate([
-        'name' => ['required', 'string', 'max:255'],
-        'first_name' => ['nullable', 'string', 'max:255'],
-        'last_name' => ['nullable', 'string', 'max:255'],
-        'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-        'phone' => ['nullable', 'string', 'max:20'],
-        'company' => ['nullable', 'string', 'max:255'],
-        'password' => ['required', 'string', 'min:8', 'confirmed'],
-    ]);
-
-    $user = \App\Models\User::create([
-        'name' => $validated['name'],
-        'first_name' => $validated['first_name'] ?? null,
-        'last_name' => $validated['last_name'] ?? null,
-        'email' => $validated['email'],
-        'phone' => $validated['phone'] ?? null,
-        'company' => $validated['company'] ?? null,
-        'password' => \Illuminate\Support\Facades\Hash::make($validated['password']),
-        'status' => 'active',
-        'language' => 'en',
-        'timezone' => 'UTC',
-        'currency' => 'USD',
-        'marketing_emails' => true,
-        'is_admin' => false,
-    ]);
-
-    Auth::login($user);
-
-    return redirect()->route('client.dashboard')->with('success', 'Welcome! Your account has been created successfully.');
-})->middleware(['guest', 'throttle:3,60']);
+Route::post('/register', [RegisteredUserController::class, 'store'])
+    ->middleware(['guest', 'throttle:3,60', 'throttle:10,1']);
 
 // Password reset routes
-Route::get('/forgot-password', function () {
-    return view('auth.forgot-password');
-})->middleware('guest')->name('password.request');
+Route::get('/forgot-password', [PasswordResetController::class, 'showRequestForm'])
+    ->middleware('guest')
+    ->name('password.request');
 
-Route::post('/forgot-password', function () {
-    request()->validate(['email' => 'required|email|exists:users,email']);
-    
-    $user = \App\Models\User::where('email', request()->email)->first();
-    
-    // Create password reset token
-    $token = \Illuminate\Support\Str::random(60);
-    \Illuminate\Support\Facades\DB::table('password_reset_tokens')->insert([
-        'email' => $user->email,
-        'token' => \Illuminate\Support\Facades\Hash::make($token),
-        'created_at' => now(),
-    ]);
-    
-    // In a real application, you would send an email here
-    // For now, we'll just show success message
-    
-    return back()->with('status', 'We have emailed your password reset link!');
-})->middleware(['guest', 'throttle:3,60'])->name('password.email');
+Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLink'])
+    ->middleware(['guest', 'throttle:3,60'])
+    ->name('password.email');
 
-Route::get('/reset-password/{token}', function ($token) {
-    $resetToken = \Illuminate\Support\Facades\DB::table('password_reset_tokens')
-        ->where('token', $token)
-        ->where('created_at', '>', now()->subHours(24))
-        ->first();
-    
-    if (!$resetToken) {
-        return redirect()->route('password.request')->with('error', 'Invalid or expired password reset token.');
-    }
-    
-    return view('auth.reset-password', ['token' => $token, 'email' => $resetToken->email]);
-})->middleware('guest')->name('password.reset');
+Route::get('/reset-password/{token}', [PasswordResetController::class, 'showResetForm'])
+    ->middleware('guest')
+    ->name('password.reset');
 
-Route::post('/reset-password', function () {
-    request()->validate([
-        'token' => 'required',
-        'email' => 'required|email|exists:users,email',
-        'password' => 'required|string|min:8|confirmed',
-    ]);
-    
-    // Get all tokens for this email and check each one
-    $resetTokens = \Illuminate\Support\Facades\DB::table('password_reset_tokens')
-        ->where('email', request()->email)
-        ->where('created_at', '>', now()->subHours(24))
-        ->get();
-    
-    $validToken = null;
-    foreach ($resetTokens as $tokenRecord) {
-        if (\Illuminate\Support\Facades\Hash::check(request()->token, $tokenRecord->token)) {
-            $validToken = $tokenRecord;
-            break;
-        }
-    }
-    
-    if (!$validToken) {
-        return back()->with('error', 'Invalid or expired password reset token.');
-    }
-    
-    // Update user password
-    $user = \App\Models\User::where('email', request()->email)->first();
-    $user->update([
-        'password' => \Illuminate\Support\Facades\Hash::make(request()->password),
-    ]);
-    
-    // Delete the reset token
-    \Illuminate\Support\Facades\DB::table('password_reset_tokens')
-        ->where('token', $validToken->token)
-        ->delete();
-    
-    return redirect()->route('login')->with('status', 'Your password has been reset successfully!');
-})->middleware('guest')->name('password.update');
+Route::post('/reset-password', [PasswordResetController::class, 'reset'])
+    ->middleware('guest')
+    ->name('password.update');
 
 // Authenticated routes
 Route::middleware('auth')->group(function () {
-    Route::post('/logout', function () {
-        Auth::logout();
-        request()->session()->invalidate();
-        request()->session()->regenerateToken();
-        return redirect('/');
-    })->name('logout');
+    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
+        ->name('logout');
 });
 
 /*

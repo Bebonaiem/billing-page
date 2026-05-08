@@ -21,8 +21,8 @@ class Dashboard extends Component
             'open_tickets' => Ticket::whereIn('status', ['open', 'answered', 'customer_reply'])->count(),
         ];
 
-        $recent_orders = Order::with('user')->latest()->take(5)->get();
-        $recent_tickets = Ticket::with('user')->latest()->take(5)->get();
+        $recent_orders = Order::with(['user', 'items.product'])->latest()->take(5)->get();
+        $recent_tickets = Ticket::with(['user', 'department'])->latest()->take(5)->get();
 
         return view('livewire.admin.dashboard', [
             'stats' => $stats,

@@ -18,6 +18,7 @@ use App\Models\UserNote;
 use App\Models\CreditTransaction;
 use App\Models\UserCredit;
 use App\Models\LoginHistory;
+use App\Constants\BillingConstants;
 
 class User extends Authenticatable
 {
@@ -146,13 +147,13 @@ class User extends Authenticatable
     
     public function getUnpaidInvoicesCount(): int
     {
-        return $this->invoices()->where('status', 'unpaid')->count();
+        return $this->invoices()->where('status', BillingConstants::INVOICE_STATUS_UNPAID)->count();
     }
 
     public function getOverdueInvoicesCount(): int
     {
         return $this->invoices()
-            ->where('status', 'unpaid')
+            ->where('status', BillingConstants::INVOICE_STATUS_UNPAID)
             ->whereDate('due_date', '<', now())
             ->count();
     }
@@ -160,13 +161,17 @@ class User extends Authenticatable
     public function getOpenTicketsCount(): int
     {
         return $this->tickets()
-            ->whereIn('status', ['open', 'answered', 'customer_reply'])
+            ->whereIn('status', [
+                BillingConstants::TICKET_STATUS_OPEN,
+                BillingConstants::TICKET_STATUS_ANSWERED,
+                BillingConstants::TICKET_STATUS_CUSTOMER_REPLY
+            ])
             ->count();
     }
 
     public function getActiveServicesCount(): int
     {
-        return $this->services()->where('status', 'active')->count();
+        return $this->services()->where('status', BillingConstants::SERVICE_STATUS_ACTIVE)->count();
     }
 
     public function getCreditBalance(): float
@@ -177,12 +182,12 @@ class User extends Authenticatable
     // Scopes
     public function scopeActive($query)
     {
-        return $query->where('status', 'active');
+        return $query->where('status', BillingConstants::USER_STATUS_ACTIVE);
     }
 
     public function scopeSuspended($query)
     {
-        return $query->where('status', 'suspended');
+        return $query->where('status', BillingConstants::USER_STATUS_SUSPENDED);
     }
 
     public function scopeAdmins($query)
@@ -217,12 +222,12 @@ class User extends Authenticatable
 
     public function isActive(): bool
     {
-        return $this->status === 'active';
+        return $this->status === BillingConstants::USER_STATUS_ACTIVE;
     }
 
     public function isSuspended(): bool
     {
-        return $this->status === 'suspended';
+        return $this->status === BillingConstants::USER_STATUS_SUSPENDED;
     }
 
     public function canLogin(): bool
@@ -232,17 +237,19 @@ class User extends Authenticatable
 
     public function isBanned(): bool
     {
-        return $this->status === 'banned';
+        return $this->status === BillingConstants::USER_STATUS_BANNED;
     }
 
     public function isStaff(): bool
     {
-        return $this->isAdmin() || $this->status === 'staff' || $this->status === 'support';
+        return $this->isAdmin() || 
+               $this->status === BillingConstants::USER_STATUS_STAFF || 
+               $this->status === BillingConstants::USER_STATUS_SUPPORT;
     }
 
     public function hasActiveServices(): bool
     {
-        return $this->services()->where('status', 'active')->exists();
+        return $this->services()->where('status', BillingConstants::SERVICE_STATUS_ACTIVE)->exists();
     }
 
     public function updateLastLogin(): void
@@ -289,10 +296,7 @@ class User extends Authenticatable
         return true;
     }
 
-    public function getFullName(): string
-    {
-        return trim("{$this->first_name} {$this->last_name}") ?: $this->name;
-    }
+    
 
     public function getFormattedAddress(): string
     {

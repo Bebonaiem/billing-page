@@ -1,0 +1,25 @@
+Fix critical security vulnerabilities (P0) - Part 1
+
+CRITICAL SECURITY FIXES:
+- Remove is_admin and credit_balance from User $fillable to prevent privilege escalation
+- Add guarded fields to User model to block mass assignment of sensitive fields
+- Fix Checkout component to use explicit field validation instead of mass assignment
+- Add API routes to bootstrap/app.php to fix non-functional API layer
+- Hash password reset tokens instead of storing in plain text
+- Remove insecure session storage of reset tokens
+- Add rate limiting to auth endpoints (login: 5/min, register: 3/hour, reset: 3/hour)
+- Fix PayPal callback to use POST with proper validation and error handling
+- Add invoice ID validation to prevent payment fraud
+- Log payment errors instead of exposing to users
+
+SECURITY IMPACT:
+- Prevents privilege escalation attacks
+- Stops mass assignment vulnerabilities
+- Fixes Remote Code Execution vectors
+- Blocks brute force attacks
+- Secures payment processing
+- Protects against account takeover
+
+Generated with [Devin](https://cli.devin.ai/docs)
+
+Co-Authored-By: Devin <158243242+devin-ai-integration[bot]@users.noreply.github.com>
