@@ -12,40 +12,90 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            // Billing and profile fields
-            $table->string('first_name')->nullable()->after('name');
-            $table->string('last_name')->nullable()->after('first_name');
-            $table->string('phone')->nullable()->after('email');
-            $table->string('company')->nullable()->after('phone');
-            $table->text('address_line1')->nullable()->after('company');
-            $table->text('address_line2')->nullable()->after('address_line1');
-            $table->string('city')->nullable()->after('address_line2');
-            $table->string('state')->nullable()->after('city');
-            $table->string('postal_code')->nullable()->after('state');
-            $table->string('country', 2)->default('US')->after('postal_code');
+            // Billing and profile fields - only add if they don't exist
+            if (!Schema::hasColumn('users', 'first_name')) {
+                $table->string('first_name')->nullable()->after('name');
+            }
+            if (!Schema::hasColumn('users', 'last_name')) {
+                $table->string('last_name')->nullable()->after('first_name');
+            }
+            if (!Schema::hasColumn('users', 'phone')) {
+                $table->string('phone')->nullable()->after('email');
+            }
+            if (!Schema::hasColumn('users', 'company')) {
+                $table->string('company')->nullable()->after('phone');
+            }
+            if (!Schema::hasColumn('users', 'address_line1')) {
+                $table->text('address_line1')->nullable()->after('company');
+            }
+            if (!Schema::hasColumn('users', 'address_line2')) {
+                $table->text('address_line2')->nullable()->after('address_line1');
+            }
+            if (!Schema::hasColumn('users', 'city')) {
+                $table->string('city')->nullable()->after('address_line2');
+            }
+            if (!Schema::hasColumn('users', 'state')) {
+                $table->string('state')->nullable()->after('city');
+            }
+            if (!Schema::hasColumn('users', 'postal_code')) {
+                $table->string('postal_code')->nullable()->after('state');
+            }
+            if (!Schema::hasColumn('users', 'country')) {
+                $table->string('country', 2)->default('US')->after('postal_code');
+            }
             
-            // Account settings
-            $table->enum('status', ['active', 'suspended', 'banned'])->default('active')->after('country');
-            $table->string('language', 5)->default('en')->after('status');
-            $table->string('timezone')->default('UTC')->after('language');
-            $table->string('currency', 3)->default('USD')->after('timezone');
-            $table->boolean('marketing_emails')->default(true)->after('currency');
-            $table->boolean('is_admin')->default(false)->after('marketing_emails');
-            $table->timestamp('last_login_at')->nullable()->after('updated_at');
+            // Account settings - only add if they don't exist
+            if (!Schema::hasColumn('users', 'status')) {
+                $table->enum('status', ['active', 'suspended', 'banned'])->default('active')->after('country');
+            }
+            if (!Schema::hasColumn('users', 'language')) {
+                $table->string('language', 5)->default('en')->after('status');
+            }
+            if (!Schema::hasColumn('users', 'timezone')) {
+                $table->string('timezone')->default('UTC')->after('language');
+            }
+            if (!Schema::hasColumn('users', 'currency')) {
+                $table->string('currency', 3)->default('USD')->after('timezone');
+            }
+            if (!Schema::hasColumn('users', 'marketing_emails')) {
+                $table->boolean('marketing_emails')->default(true)->after('currency');
+            }
+            if (!Schema::hasColumn('users', 'is_admin')) {
+                $table->boolean('is_admin')->default(false)->after('marketing_emails');
+            }
+            if (!Schema::hasColumn('users', 'last_login_at')) {
+                $table->timestamp('last_login_at')->nullable()->after('updated_at');
+            }
             
-            // 2FA and security
-            $table->string('two_factor_secret')->nullable()->after('last_login_at');
-            $table->boolean('two_factor_enabled')->default(false)->after('two_factor_secret');
+            // 2FA and security - only add if they don't exist
+            if (!Schema::hasColumn('users', 'two_factor_secret')) {
+                $table->string('two_factor_secret')->nullable()->after('last_login_at');
+            }
+            if (!Schema::hasColumn('users', 'two_factor_enabled')) {
+                $table->boolean('two_factor_enabled')->default(false)->after('two_factor_secret');
+            }
             
-            // Billing fields
-            $table->decimal('credit_balance', 10, 2)->default(0)->after('two_factor_enabled');
-            $table->string('stripe_customer_id')->nullable()->after('credit_balance');
-            $table->string('paypal_customer_id')->nullable()->after('stripe_customer_id');
+            // Billing fields - only add if they don't exist
+            if (!Schema::hasColumn('users', 'credit_balance')) {
+                $table->decimal('credit_balance', 10, 2)->default(0)->after('two_factor_enabled');
+            }
+            if (!Schema::hasColumn('users', 'stripe_customer_id')) {
+                $table->string('stripe_customer_id')->nullable()->after('credit_balance');
+            }
+            if (!Schema::hasColumn('users', 'paypal_customer_id')) {
+                $table->string('paypal_customer_id')->nullable()->after('stripe_customer_id');
+            }
             
-            // Indexes for performance
-            $table->index(['status', 'created_at']);
-            $table->index('email');
-            $table->index('is_admin');
+            // Indexes for performance - only add if they don't exist
+            if (!Schema::hasIndex('users', 'users_status_created_at_index')) {
+                $table->index(['status', 'created_at']);
+            }
+            if (!Schema::hasIndex('users', 'users_email_index')) {
+                $table->index('email');
+            }
+            if (!Schema::hasIndex('users', 'users_is_admin_index')) {
+                $table->index('is_admin');
+            }
         });
     }
 
