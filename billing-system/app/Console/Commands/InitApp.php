@@ -300,11 +300,11 @@ class InitApp extends Command
         $this->line('Creating invoices...');
         
         $services = Service::all();
-        $statuses = ['paid', 'unpaid', 'paid', 'overdue'];
+        $statuses = ['paid', 'unpaid', 'paid', 'unpaid'];
 
         foreach ($services as $service) {
             $status = $statuses[array_rand($statuses)];
-            $dueDate = $status === 'overdue' ? now()->subDays(5) : now()->addDays(rand(5, 20));
+            $dueDate = $status === 'unpaid' ? now()->subDays(5) : now()->addDays(rand(5, 20));
             
             // Create invoice
             $invoice = Invoice::firstOrCreate([
