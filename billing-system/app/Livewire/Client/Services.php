@@ -5,6 +5,7 @@ namespace App\Livewire\Client;
 use App\Models\Service;
 use App\Services\Pterodactyl\PterodactylService;
 use Livewire\Component;
+use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;
 
 class Services extends Component
@@ -32,7 +33,7 @@ class Services extends Component
     public function viewService(int $serviceId)
     {
         $this->viewingService = Service::with(['product', 'order'])
-            ->where('user_id', auth()->id())
+            ->where('user_id', Auth::id())
             ->findOrFail($serviceId);
         
         // Get server status from Pterodactyl if applicable
@@ -50,7 +51,7 @@ class Services extends Component
 
     public function requestCancellation(int $serviceId)
     {
-        $service = Service::where('user_id', auth()->id())->findOrFail($serviceId);
+        $service = Service::where('user_id', Auth::id())->findOrFail($serviceId);
         $service->update([
             'cancellation_requested' => true,
             'cancellation_date' => now(),
@@ -71,7 +72,7 @@ class Services extends Component
     public function render()
     {
         $query = Service::query()
-            ->where('user_id', auth()->id())
+            ->where('user_id', Auth::id())
             ->with('product')
             ->when($this->search, function ($query) {
                 $query->where('name', 'like', "%{$this->search}%")
@@ -87,6 +88,7 @@ class Services extends Component
 
         return view('livewire.client.services', [
             'services' => $services,
-        ])->layout('layouts.client', ['title' => 'My Services']);
+            'title' => 'My Services',
+        ]);
     }
 }

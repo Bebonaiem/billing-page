@@ -6,8 +6,10 @@ use App\Models\PaymentGateway;
 use App\Models\ProductConfigOptionValue;
 use App\Services\Cart\CartService;
 use App\Services\Order\OrderService;
+use App\Models\User;
 use App\Services\Payment\PaymentGatewayInterface;
 use Livewire\Component;
+use Illuminate\Support\Facades\Auth;
 
 class Checkout extends Component
 {
@@ -45,7 +47,11 @@ class Checkout extends Component
         }
         
         // Pre-fill billing info from user
-        $user = auth()->user();
+        $user = Auth::user();
+        if (!$user) {
+            return redirect()->route('login');
+        }
+        /** @var User $user */
         $this->billingInfo = [
             'first_name' => $user->first_name,
             'last_name' => $user->last_name,
@@ -124,7 +130,12 @@ class Checkout extends Component
         }
         
         // Update user billing info
-        $user = auth()->user();
+        $user = Auth::user();
+        if (!$user) {
+            $this->dispatch('notify', type: 'error', message: 'You must be logged in to place an order.');
+            return;
+        }
+        /** @var User $user */
         $user->update($this->billingInfo);
         
         try {
@@ -201,6 +212,6 @@ class Checkout extends Component
     
     public function render()
     {
-        return view('livewire.checkout.checkout')->layout('layouts.client', ['title' => 'Checkout']);
+        return view('livewire.checkout.checkout')->with('title', 'Checkout');
     }
 }
