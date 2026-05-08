@@ -4,27 +4,27 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class ClientMiddleware
 {
     /**
      * Handle an incoming request.
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!Auth::check()) {
+        // Check if user is authenticated
+        if (!auth()->check()) {
             return redirect()->route('login');
         }
-        
-        $user = Auth::user();
-        
-        // Redirect admins away from client areas
-        if ($user->is_admin) {
+
+        // Check if user is a regular client (not admin)
+        if (auth()->user()->is_admin) {
             return redirect()->route('admin.dashboard');
         }
-        
+
         return $next($request);
     }
 }

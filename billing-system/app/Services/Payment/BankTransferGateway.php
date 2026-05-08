@@ -17,43 +17,81 @@ class BankTransferGateway implements PaymentGatewayInterface
 
     public function initializePayment(Invoice $invoice, array $paymentData = []): array
     {
-        $settings = $this->config?->settings ?? [];
+        try {
+            $settings = $this->config?->settings ?? [];
+            
+            // Create a pending payment record
+            $payment = Payment::create([
+                'invoice_id' => $invoice->id,
+                'amount' => $invoice->balance,
+                'gateway' => 'bank_transfer',
+                'status' => 'pending',
+                'transaction_id' => 'BANK_TRANSFER_' . time() . '_' . $invoice->id,
+                'metadata' => [
+                    'bank_account' => $settings['account_number'] ?? 'N/A',
+                    'bank_name' => $settings['bank_name'] ?? 'N/A',
+                    'account_holder' => $settings['account_holder'] ?? 'N/A',
+                    'account_type' => $settings['account_type'] ?? 'N/A',
+                    'routing_number' => $settings['routing_number'] ?? 'N/A',
+                ],
+            ]);
+
+            return [
+                'success' => true,
+                'payment_id' => $payment->id,
+                'transaction_id' => $payment->transaction_id,
+                'message' => 'Please transfer the funds to the provided bank account details.',
+                'bank_details' => $payment->metadata,
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'error' => 'Failed to initialize bank transfer: ' . $e->getMessage(),
+            ];
+        }
+    }
+
+    public function handleWebhook(array $payload): bool
+    {
+        // Bank transfers don't typically have webhooks - manual verification required
+        return false;
+    }
+
+    public function verifyPayment(string $transactionId): array
+    {
+        $payment = Payment::where('transaction_id', $transactionId)->first();
+
+        if (!$payment) {
+            return ['success' => false, 'message' => 'Payment not found'];
+        }
 
         return [
             'success' => true,
-            'instructions' => $settings['instructions'] ?? 'Please transfer the invoice total to the bank account details configured in the gateway settings.',
-            'reference' => $invoice->invoice_number,
-            'redirect_url' => null,
+            'status' => $payment->status,
+            'amount' => $payment->amount,
+            'created_at' => $payment->created_at,
         ];
     }
 
-    public function processCallback(array $requestData): Payment
+    public function refundPayment(string $transactionId, float $amount = 0): bool
     {
-        throw new \Exception('Bank transfer payments are processed manually.');
-    }
+        $payment = Payment::where('transaction_id', $transactionId)->first();
 
-    public function verifyPayment(string $transactionId): bool
-    {
-        return false;
-    }
+        if (!$payment) {
+            return false;
+        }
 
-    public function refund(Payment $payment, float $amount): bool
-    {
-        return false;
-    }
+        $refundAmount = $amount ?: $payment->amount;
 
-    public function getName(): string
-    {
-        return 'Bank Transfer';
-    }
+        Payment::create([
+            'invoice_id' => $payment->invoice_id,
+            'amount' => -$refundAmount,
+            'gateway' => 'bank_transfer',
+            'status' => 'refunded',
+            'transaction_id' => 'REFUND_' . $transactionId,
+            'metadata' => ['original_transaction' => $transactionId],
+        ]);
 
-    public function supportsRecurring(): bool
-    {
-        return false;
-    }
-
-    public function supportsRefunds(): bool
-    {
-        return false;
+        return true;
     }
 }

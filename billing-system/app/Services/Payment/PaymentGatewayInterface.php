@@ -3,62 +3,27 @@
 namespace App\Services\Payment;
 
 use App\Models\Invoice;
-use App\Models\Payment;
-
 interface PaymentGatewayInterface
 {
     /**
-     * Initialize payment for an invoice
-     *
-     * @param Invoice $invoice
-     * @param array $paymentData
-     * @return array Contains 'redirect_url' or 'token' for the payment
+     * Initialize a payment for an invoice.
+     * Returns an array with 'success' and gateway-specific data (redirect URL, session id, etc.).
      */
     public function initializePayment(Invoice $invoice, array $paymentData = []): array;
 
     /**
-     * Process the payment callback/webhook
-     *
-     * @param array $requestData
-     * @return Payment
+     * Handle a webhook or callback payload.
+     * Returns true if processed successfully.
      */
-    public function processCallback(array $requestData): Payment;
+    public function handleWebhook(array $payload): bool;
 
     /**
-     * Verify if a payment is valid
-     *
-     * @param string $transactionId
-     * @return bool
+     * Verify a payment by transaction or order id. Returns an array with verification result.
      */
-    public function verifyPayment(string $transactionId): bool;
+    public function verifyPayment(string $transactionId): array;
 
     /**
-     * Refund a payment
-     *
-     * @param Payment $payment
-     * @param float $amount
-     * @return bool
+     * Refund a payment by transaction id. Returns true on success.
      */
-    public function refund(Payment $payment, float $amount): bool;
-
-    /**
-     * Get the gateway name
-     *
-     * @return string
-     */
-    public function getName(): string;
-
-    /**
-     * Check if gateway supports recurring payments
-     *
-     * @return bool
-     */
-    public function supportsRecurring(): bool;
-
-    /**
-     * Check if gateway supports refunds
-     *
-     * @return bool
-     */
-    public function supportsRefunds(): bool;
+    public function refundPayment(string $transactionId, float $amount = 0): bool;
 }

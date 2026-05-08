@@ -4,44 +4,30 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Symfony\Component\HttpFoundation\Response;
 
 class EnsureTempDir
 {
     /**
      * Handle an incoming request.
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Ensure temporary directory exists and is writable
-        $tempDir = sys_get_temp_dir();
-        
-        if (!is_dir($tempDir)) {
-            mkdir($tempDir, 0755, true);
+        // Ensure temp directory exists
+        $tempDir = storage_path('temp');
+        if (!File::isDirectory($tempDir)) {
+            File::makeDirectory($tempDir, 0755, true);
         }
-        
-        if (!is_writable($tempDir)) {
-            chmod($tempDir, 0755);
+
+        // Ensure uploads directory exists
+        $uploadsDir = storage_path('uploads');
+        if (!File::isDirectory($uploadsDir)) {
+            File::makeDirectory($uploadsDir, 0755, true);
         }
-        
-        // Create Laravel-specific temp directories
-        $laravelTempDirs = [
-            storage_path('framework/cache'),
-            storage_path('framework/sessions'),
-            storage_path('framework/views'),
-            storage_path('framework/testing'),
-        ];
-        
-        foreach ($laravelTempDirs as $dir) {
-            if (!is_dir($dir)) {
-                mkdir($dir, 0755, true);
-            }
-            
-            if (!is_writable($dir)) {
-                chmod($dir, 0755);
-            }
-        }
-        
+
         return $next($request);
     }
 }
